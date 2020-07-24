@@ -1,9 +1,14 @@
 #include <iostream>
 #include "classes.h"
+#include "func.h"
 
-using namespace std;
+Person people[NUM_PEOPLE];
+std::default_random_engine generator;
 
 int main()
 {
-	cout << "Hello world!" << endl;
+	generator.seed(SEED);
+	SetAgents(people, generator);
+
+	std::cout << "Hello world!" << std::endl;
 }
