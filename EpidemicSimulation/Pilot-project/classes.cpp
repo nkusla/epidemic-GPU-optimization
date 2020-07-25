@@ -31,7 +31,7 @@ void Person::setStatus(Status status) {
 }
 
 void Person::TryInfect(std::default_random_engine generator, int infectionProbability) {
-	std::uniform_int_distribution<int> distribution(1, 100);
+	std::uniform_int_distribution<int> distribution(1, 1000);
 
 	int rand = distribution(generator);
 	if (rand <= infectionProbability) {
@@ -40,7 +40,7 @@ void Person::TryInfect(std::default_random_engine generator, int infectionProbab
 }
 
 void Person::TryKill(std::default_random_engine generator, int deathProbability) {
-	std::uniform_int_distribution<int> distribution(1, 100);
+	std::uniform_int_distribution<int> distribution(1, 1000);
 
 	int rand = distribution(generator);
 	if (rand <= deathProbability) {

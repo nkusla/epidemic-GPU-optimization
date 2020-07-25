@@ -1,5 +1,3 @@
-#include <iostream>
-#include <vector>
 #include "func.h"
 
 void ShuffleVector(std::vector<int>* p) {
@@ -13,7 +11,7 @@ void SetVector(std::vector<int>* p) {
 }
 
 void SetAgents(Person* people, std::default_random_engine generator) {
-	int i, random = 0;
+	int i, random, firstIndex, lastIndex;
 	int distancingNum = (int)NUM_PEOPLE * DISTANCING_PERCENTAGE;
 
 	std::vector<int> v;
@@ -26,18 +24,43 @@ void SetAgents(Person* people, std::default_random_engine generator) {
 	}
 
 	// Set homeIDs for people
-	std::uniform_int_distribution<int> distributionHome(0, NUM_HOMES-1);
+	firstIndex = 0;
+	lastIndex = NUM_HOMES - 1;
+	std::uniform_int_distribution<int> distributionHome(firstIndex, lastIndex);
 	for (i = 0; i < NUM_PEOPLE; ++i) {
 		random = distributionHome(generator);
 		people[i].setHomeID(random);
 	}
 
 	// Set workIDs for people
+	firstIndex = lastIndex + 1;
+	lastIndex = lastIndex + NUM_WORKPLACES - 1;
 	for (i = 0; i < NUM_PEOPLE; ++i) {
-		std::uniform_int_distribution<int> distributionWork(0, NUM_WORKPLACES-s1);
+		std::uniform_int_distribution<int> distributionWork(firstIndex, lastIndex);
 		random = distributionWork(generator);
 		people[i].setWorkID(random);
 	}
 
-
 }
+
+void SetAgentsHome(Person* people, std::vector<int>* locations) {
+	int i, homeID;
+
+	for (i = 0; i < NUM_PEOPLE; ++i) {
+		homeID = people[i].getHomeID();
+		locations[homeID].push_back(i);
+	}
+}
+
+void InfectAgents(Person* people) {
+	int initialInfected = (int)NUM_PEOPLE * INITIAL_INFECTIONS;
+	
+	std::vector<int> v;
+	SetVector(&v);
+	ShuffleVector(&v);
+
+	for (int i = 0; i < initialInfected; ++i) {
+		people[v[i]].setStatus(I);
+	}
+}
+
