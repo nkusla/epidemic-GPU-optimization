@@ -14,3 +14,7 @@ void SetAgents(Person* people, std::default_random_engine generator);
 void SetAgentsHome(Person* people, std::vector<int>* locations);
 
 void InfectAgents(Person* people);
+
+void ChangeAgentsLocation(Person* people, std::vector<int>* locations);
+
+void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine generator, int locationsSize);

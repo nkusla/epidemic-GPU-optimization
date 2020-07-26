@@ -24,16 +24,26 @@ int simulationTime = 0;
 
 int main()
 {
-	int i;
+	int i = 0, dayDuration = 0;
 	generator.seed(SEED); // Sets seed of generator
 	SetAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people);
 	
-
 	while (simulationTime <= SIMULATION_DURATION * DAY_DURATION) {
 
-		++simulationTime;
+		// ChangeAgentsLocation(...);
+		while (i < NUM_INTERACTIONS) {
+			MakeInteractions(people, locations, generator, popularPlaceIndexLast);
+			++i;
+		}
+		i = 0;
+		dayDuration += 1;
+		
+		if (dayDuration == DAY_DURATION) {
+			simulationTime += dayDuration;
+			dayDuration = 0;
+		}
 	}
 
 	std::cout << "Hello world!" << std::endl;

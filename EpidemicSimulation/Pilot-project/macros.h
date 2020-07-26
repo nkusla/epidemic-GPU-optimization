@@ -13,9 +13,7 @@
 #define INITIAL_INFECTIONS 0.001
 #define DISTANCING_PERCENTAGE 0.2
 #define INFECTION_PROBABILITY 0.4
-#define HOME_INFECTION_PROBABILITY 0.6
 #define FATALITY_RATE 0.01
-#define SATURATED_FATALITY_RATE 0.07
 
 // days
 #define INFECTION_DURATION 12
@@ -25,6 +23,8 @@
 #define WORK_HOURS 9
 #define LOCATION_DURATION 2
 #define DAY_DURATION 15
+
+#define NUM_INTERACTIONS 4
 
 // Status that show if person is infected, recovered, dead...
 enum Status { S, I, R, D };
