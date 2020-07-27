@@ -91,3 +91,62 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 	}
 
 }
+
+void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations) {
+	int currentLocation = person.getCurrentLocation();
+	std::vector<int> v = locations[currentLocation];
+
+	for (auto it = v.begin(); it != v.end(); ++it) {
+		if (personIndex == *it) {
+			v.erase(it);
+			break;
+		}
+	}
+
+	locations[currentLocation] = v;
+}
+
+void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine generator, int dayDuration) {
+	// Upper and lower indexes that will be used when accessing locations of agents
+	const int homeIndexFirst = 0;
+	const int homeIndexLast = NUM_HOMES - 1;
+
+	const int workIndexFirst = homeIndexLast + 1;
+	const int workIndexLast = workIndexFirst + NUM_WORKPLACES - 1;
+
+	const int popularPlaceIndexFirst = workIndexLast + 1;
+	const int popularPlaceIndexLast = popularPlaceIndexFirst + POPULAR_PLACES - 1;
+	
+	std::uniform_int_distribution<int> distributionPopularPlaces(popularPlaceIndexFirst, popularPlaceIndexLast);
+	int i, j, locationID, rand;
+
+	// Sends people to work
+	if (dayDuration == 0) {
+		for (i = homeIndexFirst; i <= homeIndexLast; ++i) {
+			std::vector<int> v = locations[i];
+			for (j = 0; j < v.size(); ++j) {
+
+			}
+		}
+	}
+	// Sends some people home and some to popular palces
+	else if(dayDuration == WORK_HOURS) {
+		for (i = workIndexFirst; i <= workIndexLast; ++i) {
+			std::vector<int> v = locations[i];
+			for (j = 0; j < v.size(); ++j) {
+				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
+				if (!people[v[j]].getDistancing()) {
+					rand = distributionPopularPlaces(generator);
+					locations[rand].push_back(v[j]);
+					people[v[j]].setCurrentLocation(rand);
+				}
+				else {
+					Person p = people[v[j]];
+					locations[p.getHomeID()].push_back(v[j]);
+					p.setCurrentLocation(p.getHomeID());
+					people[v[j]] = p;
+				}
+			}
+		}
+	}
+}

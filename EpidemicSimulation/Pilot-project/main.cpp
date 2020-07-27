@@ -7,17 +7,8 @@
 Person people[NUM_PEOPLE]; // Array of people
 std::default_random_engine generator; // Generator that is used when generating numbers
 
-std::vector<int> locations[NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES];
-
-// Upper and lower indexes that will be used when accessing locations of agents
-const int homeIndexFirst = 0;
-const int homeIndexLast = NUM_HOMES - 1;
-
-const int workIndexFirst = homeIndexLast + 1;
-const int workIndexLast = workIndexFirst + NUM_WORKPLACES - 1;
-
-const int popularPlaceIndexFirst = workIndexLast + 1;
-const int popularPlaceIndexLast = workIndexFirst + POPULAR_PLACES - 1;
+const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
+std::vector<int> locations[locationArraySize];
 
 int deadPeople, maxInfected, recovered = 0;
 int simulationTime = 0;
@@ -32,9 +23,9 @@ int main()
 	
 	while (simulationTime <= SIMULATION_DURATION * DAY_DURATION) {
 
-		// ChangeAgentsLocation(...);
+		ChangeAgentsLocation(people, locations, generator, dayDuration);
 		while (i < NUM_INTERACTIONS) {
-			MakeInteractions(people, locations, generator, popularPlaceIndexLast);
+			MakeInteractions(people, locations, generator, locationArraySize - 1);
 			++i;
 		}
 		i = 0;
@@ -46,5 +37,5 @@ int main()
 		}
 	}
 
-	std::cout << "Hello world!" << std::endl;
+	std::cout << "Hello World!" << std::endl;
 }

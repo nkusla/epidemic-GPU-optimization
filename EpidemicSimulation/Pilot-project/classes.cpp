@@ -3,13 +3,15 @@
 Person::Person() {
 	this->homeID = -1;
 	this->workID = -1;
+	this->currentLocation = -1;
 	this->distancing = false;
 	this->status = S;
 }
 
-Person::Person(int homeID, int workID, bool distancing, Status status){
+Person::Person(int homeID, int workID, int currentLocation, bool distancing, Status status){
 	this->homeID = homeID;
 	this->workID = workID;
+	this->currentLocation = currentLocation;
 	this->distancing = distancing;
 	this->status = status;
 }
@@ -20,6 +22,10 @@ void Person::setHomeID(int homeID) {
 
 void Person::setWorkID(int workID) {
 	this->workID = workID;
+}
+
+void Person::setCurrentLocation(int currentLocation) {
+	this->currentLocation = currentLocation;
 }
 
 void Person::setDistancing(bool distancing) {

@@ -15,6 +15,8 @@ void SetAgentsHome(Person* people, std::vector<int>* locations);
 
 void InfectAgents(Person* people);
 
-void ChangeAgentsLocation(Person* people, std::vector<int>* locations);
+void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations);
+
+void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine generator, int dayDuration);
 
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine generator, int locationsSize);
