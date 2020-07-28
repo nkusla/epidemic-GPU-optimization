@@ -63,16 +63,18 @@ void InfectAgents(Person* people) {
 
 	for (int i = 0; i < initialInfected; ++i) {
 		people[v[i]].setStatus(I);
+		Person::numInfected++;
 	}
 }
 
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine generator, int size) {
 	int rand, i, j;
+	std::vector<int> v;
 
 	for (i = 0; i <= size; ++i) {
 
 		std::uniform_int_distribution<int> distribution(0, locations[i].size()-1);
-		std::vector<int> v = locations[i];
+		v = locations[i];
 		for (j = 0; j < locations[i].size(); ++j) {
 			rand = distribution(generator);
 			if (people[v[j]].getStatus() != D && people[v[rand]].getStatus() != D) {
@@ -118,33 +120,77 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 	const int popularPlaceIndexLast = popularPlaceIndexFirst + POPULAR_PLACES - 1;
 	
 	std::uniform_int_distribution<int> distributionPopularPlaces(popularPlaceIndexFirst, popularPlaceIndexLast);
-	int i, j, locationID, rand;
+	std::vector<int> v;
+	int i, j, locationID;
 
 	// Sends people to work
 	if (dayDuration == 0) {
 		for (i = homeIndexFirst; i <= homeIndexLast; ++i) {
-			std::vector<int> v = locations[i];
+			v = locations[i];
 			for (j = 0; j < v.size(); ++j) {
-
+				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
+				locationID = people[v[j]].getWorkID();
+				locations[locationID].push_back(v[j]);
+				people[v[j]].setCurrentLocation(locationID);
 			}
 		}
 	}
 	// Sends some people home and some to popular palces
 	else if(dayDuration == WORK_HOURS) {
 		for (i = workIndexFirst; i <= workIndexLast; ++i) {
-			std::vector<int> v = locations[i];
+			v = locations[i];
 			for (j = 0; j < v.size(); ++j) {
 				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
 				if (!people[v[j]].getDistancing()) {
-					rand = distributionPopularPlaces(generator);
-					locations[rand].push_back(v[j]);
-					people[v[j]].setCurrentLocation(rand);
+					locationID = distributionPopularPlaces(generator);
+					locations[locationID].push_back(v[j]);
+					people[v[j]].setCurrentLocation(locationID);
 				}
 				else {
-					Person p = people[v[j]];
-					locations[p.getHomeID()].push_back(v[j]);
-					p.setCurrentLocation(p.getHomeID());
-					people[v[j]] = p;
+					locationID = people[v[j]].getHomeID();
+					locations[locationID].push_back(v[j]);
+					people[v[j]].setCurrentLocation(locationID);
+				}
+			}
+		}
+	}
+	// Sends people from one popular location to the other
+	else if (dayDuration == WORK_HOURS + LOCATION_DURATION) {
+		for (i = popularPlaceIndexFirst; i <= popularPlaceIndexLast; ++i) {
+			v = locations[i];
+			for (j = 0; j < v.size(); ++j) {
+				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
+				locationID = distributionPopularPlaces(generator);
+				locations[locationID].push_back(v[j]);
+				people[v[j]].setCurrentLocation(locationID);
+			}
+		}
+	}
+	else if (dayDuration == WORK_HOURS + 2 * LOCATION_DURATION) {
+		for (i = popularPlaceIndexFirst; i <= popularPlaceIndexLast; ++i) {
+			v = locations[i];
+			for (j = 0; j < v.size(); ++j) {
+				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
+				locationID = people[v[j]].getHomeID();
+				locations[locationID].push_back(v[j]);
+				people[v[j]].setCurrentLocation(locationID);
+			}
+		}
+	}
+	else { 
+	}
+}
+
+void CheckAgentHealth(Person* people, std::vector<int>* locations, std::default_random_engine generator) {	
+	for (int i = 0; i < NUM_PEOPLE; ++i) {
+		if (people[i].getStatus() == I) {
+			if (people[i].TryKill(generator, FATALITY_RATE * 1000)) {
+				RemoveAgentFromCurrentLocation(people[i], i, locations);
+			}
+			else {
+				people[i].ExtendInfectionDay();
+				if (people[i].getInfectionDays() == INFECTION_DURATION) {
+					people[i].RecoverAgent();
 				}
 			}
 		}

@@ -20,3 +20,5 @@ void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<
 void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine generator, int dayDuration);
 
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine generator, int locationsSize);
+
+void CheckAgentHealth(Person* people, std::vector<int>* locations, std::default_random_engine generator);

@@ -10,12 +10,9 @@ std::default_random_engine generator; // Generator that is used when generating 
 const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 std::vector<int> locations[locationArraySize];
 
-int deadPeople, maxInfected, recovered = 0;
-int simulationTime = 0;
-
 int main()
 {
-	int i = 0, dayDuration = 0;
+	int i = 0, dayDuration = 0, simulationTime = 0;
 	generator.seed(SEED); // Sets seed of generator
 	SetAgents(people, generator);
 	SetAgentsHome(people, locations);
@@ -33,9 +30,13 @@ int main()
 		
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
+			CheckAgentHealth(people, locations, generator);
+			
 			dayDuration = 0;
 		}
 	}
 
-	std::cout << "Hello World!" << std::endl;
+	std::cout << "Infected: " << Person::numInfected << " - " << (float)(100*Person::numInfected)/NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Recovered: " << Person::numRecovered << " - " << (float)(100 * Person::numRecovered) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Dead: " << Person::numDead << " - " << (float)(100 * Person::numDead) / NUM_PEOPLE << "% of population" << std::endl;
 }
