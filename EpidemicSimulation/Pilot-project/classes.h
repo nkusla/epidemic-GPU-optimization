@@ -1,6 +1,7 @@
 // In this file class Person is defined. Every agent in the simulation is instance of class Person
 
 #pragma once
+#include <iostream>
 #include <random>
 #include "macros.h"
 
@@ -34,7 +35,7 @@ class Person
 		void setStatus(Status s);
 
 		void ExtendInfectionDay();
-		void TryInfect(std::default_random_engine generator, int infectionProbability);
-		bool TryKill(std::default_random_engine generator, int deathProbability);
+		void TryInfect(std::default_random_engine& generator, int infectionProbability);
+		bool TryKill(std::default_random_engine& generator, int deathProbability);
 		void RecoverAgent();
 };

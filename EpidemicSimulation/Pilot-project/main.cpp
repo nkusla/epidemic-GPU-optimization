@@ -30,9 +30,9 @@ int main()
 		
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
-			CheckAgentHealth(people, locations, generator);
-			
+			CheckAgentsHealth(people, locations, generator);
 			dayDuration = 0;
+			std::cout << "Day: " << simulationTime/DAY_DURATION << " - Infected: " << Person::numInfected << std::endl;
 		}
 	}
 

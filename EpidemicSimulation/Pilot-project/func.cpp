@@ -1,6 +1,5 @@
 #include "func.h"
 
-
 void ShuffleVector(std::vector<int>* p) {
 	std::shuffle(p->begin(), p->end(), std::default_random_engine(SEED));
 }
@@ -11,7 +10,7 @@ void SetVector(std::vector<int>* p) {
 	}
 }
 
-void SetAgents(Person* people, std::default_random_engine generator) {
+void SetAgents(Person* people, std::default_random_engine& generator) {
 	int i, random, firstIndex, lastIndex;
 	int distancingNum = (int)NUM_PEOPLE * DISTANCING_PERCENTAGE;
 
@@ -67,7 +66,7 @@ void InfectAgents(Person* people) {
 	}
 }
 
-void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine generator, int size) {
+void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int size) {
 	int rand, i, j;
 	std::vector<int> v;
 
@@ -77,18 +76,13 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 		v = locations[i];
 		for (j = 0; j < locations[i].size(); ++j) {
 			rand = distribution(generator);
-			if (people[v[j]].getStatus() != D && people[v[rand]].getStatus() != D) {
-				if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == S) {
-					continue;
-				}
-				else if (people[v[j]].getStatus() == I && people[v[rand]].getStatus() == S) {
-					people[v[rand]].TryInfect(generator, INFECTION_PROBABILITY * 1000);
-				}
-				else if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == I) {
-					people[v[j]].TryInfect(generator, INFECTION_PROBABILITY * 1000);
-				}
-				else { continue; }
+			if (people[v[j]].getStatus() == I && people[v[rand]].getStatus() == S) {
+				people[v[rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
 			}
+			else if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == I) {
+				people[v[j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+			}
+			else { continue; }
 		}
 	}
 
@@ -108,7 +102,7 @@ void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<
 	locations[currentLocation] = v;
 }
 
-void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine generator, int dayDuration) {
+void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int dayDuration) {
 	// Upper and lower indexes that will be used when accessing locations of agents
 	const int homeIndexFirst = 0;
 	const int homeIndexLast = NUM_HOMES - 1;
@@ -181,7 +175,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 	}
 }
 
-void CheckAgentHealth(Person* people, std::vector<int>* locations, std::default_random_engine generator) {	
+void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {	
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		if (people[i].getStatus() == I) {
 			if (people[i].TryKill(generator, FATALITY_RATE * 1000)) {
