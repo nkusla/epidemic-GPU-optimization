@@ -18,7 +18,7 @@ int main()
 	SetAgentsHome(people, locations);
 	InfectAgents(people);
 	
-	while (simulationTime <= SIMULATION_DURATION * DAY_DURATION) {
+	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
 		ChangeAgentsLocation(people, locations, generator, dayDuration);
 		while (i < NUM_INTERACTIONS) {
@@ -32,11 +32,11 @@ int main()
 			simulationTime += dayDuration;
 			CheckAgentsHealth(people, locations, generator);
 			dayDuration = 0;
-			std::cout << "Day: " << simulationTime/DAY_DURATION << " - Infected: " << Person::numInfected << std::endl;
+
+			WriteInfo(simulationTime);
+			Person::changeMaxNewInfected();
 		}
 	}
 
-	std::cout << "Infected: " << Person::numInfected << " - " << (float)(100*Person::numInfected)/NUM_PEOPLE << "% of population" << std::endl;
-	std::cout << "Recovered: " << Person::numRecovered << " - " << (float)(100 * Person::numRecovered) / NUM_PEOPLE << "% of population" << std::endl;
-	std::cout << "Dead: " << Person::numDead << " - " << (float)(100 * Person::numDead) / NUM_PEOPLE << "% of population" << std::endl;
+	SimulationEndInfo();
 }

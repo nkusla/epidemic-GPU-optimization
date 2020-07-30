@@ -11,11 +11,14 @@ class Person
 		int homeID;
 		int workID;
 		int currentLocation;
-		int infectionDays;
-		bool distancing;
+		int infectionDays; // Tracks how long person has been infected
+		bool distancing; // Determines if person is social distancing
 		Status status;
 	public:
-		static int numDead, numInfected, numRecovered;
+		static int numDead, numInfected, numRecovered; // Number of dead, infected and recovered people at the momenz
+		static int maxInfected; // Number of infected people since the start of an epidemic
+		static int newInfected; // Number of infected in the same day (new cases)
+		static int maxNewInfected; // Max number of infected on the same days (max new cases)
 
 		Person();
 		Person(int homeID, int workID, int currentLocation, int infectionDays, bool distancing, Status status);
@@ -35,7 +38,9 @@ class Person
 		void setStatus(Status s);
 
 		void ExtendInfectionDay();
-		void TryInfect(std::default_random_engine& generator, int infectionProbability);
+		bool TryInfect(std::default_random_engine& generator, int infectionProbability);
 		bool TryKill(std::default_random_engine& generator, int deathProbability);
 		void RecoverAgent();
+
+		static void changeMaxNewInfected();
 };

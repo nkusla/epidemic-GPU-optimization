@@ -22,3 +22,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int locationsSize);
 
 void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default_random_engine& generator);
+
+void WriteInfo(int simulationTime);
+
+void SimulationEndInfo();

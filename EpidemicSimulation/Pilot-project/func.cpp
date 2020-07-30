@@ -63,6 +63,7 @@ void InfectAgents(Person* people) {
 	for (int i = 0; i < initialInfected; ++i) {
 		people[v[i]].setStatus(I);
 		Person::numInfected++;
+		Person::maxInfected++;
 	}
 }
 
@@ -129,7 +130,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 			}
 		}
 	}
-	// Sends some people home and some to popular palces
+	// Sends some people home and some to popular places
 	else if(dayDuration == WORK_HOURS) {
 		for (i = workIndexFirst; i <= workIndexLast; ++i) {
 			v = locations[i];
@@ -178,7 +179,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {	
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		if (people[i].getStatus() == I) {
-			if (people[i].TryKill(generator, FATALITY_RATE * 1000)) {
+			if (people[i].TryKill(generator, FATALITY_RATE * 100000)) {
 				RemoveAgentFromCurrentLocation(people[i], i, locations);
 			}
 			else {
@@ -189,4 +190,20 @@ void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default
 			}
 		}
 	}
+}
+
+void WriteInfo(int simulationTime) {
+	std::cout << "Day " << simulationTime / DAY_DURATION << " - Infected: " << Person::numInfected << " - new cases: " << Person::newInfected << std::endl;
+}
+
+void SimulationEndInfo() {
+
+	std::cout << std::endl;
+	std::cout << "Max infected: " << Person::numInfected << " - " << (float)(100 * Person::maxInfected) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Peak of epidemic: " << Person::maxNewInfected << " - " << (float)(100 * Person::maxNewInfected) / NUM_PEOPLE << std::endl;
+	
+	std::cout << std::endl;
+	std::cout << "Infected: " << Person::numInfected << " - " << (float)(100 * Person::numInfected) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Recovered: " << Person::numRecovered << " - " << (float)(100 * Person::numRecovered) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Dead: " << Person::numDead << " - " << (float)(100 * Person::numDead) / NUM_PEOPLE << "% of population" << std::endl;
 }

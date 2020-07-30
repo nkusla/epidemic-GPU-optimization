@@ -4,6 +4,10 @@ int Person::numInfected = 0;
 int Person::numRecovered = 0;
 int Person::numDead = 0;
 
+int Person::maxInfected = 0;
+int Person::newInfected = 0;
+int Person::maxNewInfected = 0;
+
 Person::Person() {
 	this->homeID = -1;
 	this->workID = -1;
@@ -50,23 +54,30 @@ void Person::ExtendInfectionDay() {
 	this->infectionDays++;
 }
 
-void Person::TryInfect(std::default_random_engine& generator, int infectionProbability) {
+bool Person::TryInfect(std::default_random_engine& generator, int infectionProbability) {
 	std::uniform_int_distribution<int> distribution(1, 100000);
 
 	int rand = distribution(generator);
 	if (rand <= infectionProbability) {
 		this->status = I;
 		numInfected++;
+		maxInfected++;
+		newInfected++;
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
 bool Person::TryKill(std::default_random_engine& generator, int deathProbability) {
-	std::uniform_int_distribution<int> distribution(1, 1000);
+	std::uniform_int_distribution<int> distribution(1, 100000);
 
 	int rand = distribution(generator);
 	if (rand <= deathProbability) {
 		this->status = D;
 		numDead++;
+		numInfected--;
 		return true;
 	}
 	else {
@@ -77,4 +88,12 @@ bool Person::TryKill(std::default_random_engine& generator, int deathProbability
 void Person::RecoverAgent() {
 	this->status = R;
 	numRecovered++;
+	numInfected--;
+}
+
+void Person::changeMaxNewInfected() {
+	if (newInfected > maxNewInfected) {
+		maxNewInfected = newInfected;
+	}
+	newInfected = 0;
 }
