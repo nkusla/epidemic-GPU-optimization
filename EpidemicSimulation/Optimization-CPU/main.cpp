@@ -16,7 +16,7 @@ int main()
 	generator.seed(SEED); // Sets seed of generator
 	SetAgents(people, generator);
 	SetAgentsHome(people, locations);
-	InfectAgents(people);
+	InfectAgents(people, generator);
 	
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 

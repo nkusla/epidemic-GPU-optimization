@@ -5,15 +5,13 @@
 #include <vector>
 #include "person.h"
 
-void ShuffleVector(std::vector<int>* p);
-
-void SetVector(std::vector<int>* p);
+void RandomNoRepetition(std::vector<int>* v, std::default_random_engine& generator);
 
 void SetAgents(Person* people, std::default_random_engine& generator);
 
 void SetAgentsHome(Person* people, std::vector<int>* locations);
 
-void InfectAgents(Person* people);
+void InfectAgents(Person* people, std::default_random_engine& generator);
 
 void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations);
 

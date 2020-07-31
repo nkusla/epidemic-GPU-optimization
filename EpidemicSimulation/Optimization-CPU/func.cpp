@@ -1,12 +1,10 @@
 #include "func.h"
 
-void ShuffleVector(std::vector<int>* p) {
-	std::shuffle(p->begin(), p->end(), std::default_random_engine(SEED));
-}
+void RandomNoRepetition(std::vector<int>* v, std::default_random_engine& generator) {
+	std::shuffle(v->begin(), v->end(), generator);
 
-void SetVector(std::vector<int>* p) {
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
-		p->push_back(i);
+		v->push_back(i);
 	}
 }
 
@@ -15,10 +13,9 @@ void SetAgents(Person* people, std::default_random_engine& generator) {
 	int distancingNum = (int)NUM_PEOPLE * DISTANCING_PERCENTAGE;
 
 	std::vector<int> v;
-	SetVector(&v);
 
 	// Set pople who are distancing
-	ShuffleVector(&v);
+	RandomNoRepetition(&v, generator);
 	for (i = 0; i < distancingNum; ++i) {
 		people[v[i]].setDistancing(true);
 	}
@@ -53,13 +50,12 @@ void SetAgentsHome(Person* people, std::vector<int>* locations) {
 	}
 }
 
-void InfectAgents(Person* people) {
+void InfectAgents(Person* people, std::default_random_engine& generator) {
 	int initialInfected = (int)NUM_PEOPLE * INITIAL_INFECTIONS;
 	
 	std::vector<int> v;
-	SetVector(&v);
-	ShuffleVector(&v);
 
+	RandomNoRepetition(&v, generator);
 	for (int i = 0; i < initialInfected; ++i) {
 		people[v[i]].setStatus(I);
 		Person::numInfected++;
@@ -73,17 +69,19 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 
 	for (i = 0; i <= size; ++i) {
 
-		std::uniform_int_distribution<int> distribution(0, locations[i].size()-1);
-		v = locations[i];
-		for (j = 0; j < locations[i].size(); ++j) {
-			rand = distribution(generator);
-			if (people[v[j]].getStatus() == I && people[v[rand]].getStatus() == S) {
-				people[v[rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+		if (locations[i].size() > 1) {
+			std::uniform_int_distribution<int> distribution(0, locations[i].size()-1);
+			v = locations[i];
+			for (j = 0; j < locations[i].size(); ++j) {
+				rand = distribution(generator);
+				if (people[v[j]].getStatus() == I && people[v[rand]].getStatus() == S) {
+					people[v[rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+				}
+				else if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == I) {
+					people[v[j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+				}
+				else { continue; }
 			}
-			else if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == I) {
-				people[v[j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
-			}
-			else { continue; }
 		}
 	}
 
@@ -199,7 +197,7 @@ void WriteInfo(int simulationTime) {
 void SimulationEndInfo() {
 
 	std::cout << std::endl;
-	std::cout << "Max infected: " << Person::numInfected << " - " << (float)(100 * Person::maxInfected) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << "Max infected: " << Person::maxInfected << " - " << (float)(100 * Person::maxInfected) / NUM_PEOPLE << "% of population" << std::endl;
 	std::cout << "Peak of epidemic: " << Person::maxNewInfected << " - " << (float)(100 * Person::maxNewInfected) / NUM_PEOPLE << std::endl;
 	
 	std::cout << std::endl;
