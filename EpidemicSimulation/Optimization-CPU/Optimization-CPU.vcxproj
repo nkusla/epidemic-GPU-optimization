@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{ee92489c-d2ac-4b22-8a5d-cce5cb50af25}</ProjectGuid>
-    <RootNamespace>Pilotproject</RootNamespace>
+    <RootNamespace>OptimizationCPU</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Optimization-CPU</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -141,11 +142,11 @@
   <ItemGroup>
     <ClInclude Include="func.h" />
     <ClInclude Include="macros.h" />
-    <ClInclude Include="classes.h" />
+    <ClInclude Include="person.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="classes.cpp" />
+    <ClCompile Include="person.cpp" />
     <ClCompile Include="func.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

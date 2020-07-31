@@ -18,10 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="classes.cpp">
+    <ClCompile Include="func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="func.cpp">
+    <ClCompile Include="person.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClInclude Include="macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="classes.h">
+    <ClInclude Include="func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="func.h">
+    <ClInclude Include="person.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

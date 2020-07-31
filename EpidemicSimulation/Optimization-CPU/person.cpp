@@ -1,4 +1,4 @@
-#include "classes.h"
+#include "person.h"
 
 int Person::numInfected = 0;
 int Person::numRecovered = 0;

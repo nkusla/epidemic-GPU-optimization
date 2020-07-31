@@ -3,7 +3,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "classes.h"
+#include "person.h"
 
 void ShuffleVector(std::vector<int>* p);
 

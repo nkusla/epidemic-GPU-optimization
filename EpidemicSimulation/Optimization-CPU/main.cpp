@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
-#include "classes.h"
+#include "person.h"
 #include "func.h"
 
 Person people[NUM_PEOPLE]; // Array of people
