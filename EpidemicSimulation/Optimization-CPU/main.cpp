@@ -17,7 +17,7 @@ int main()
 	SetAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
-	
+
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
 		ChangeAgentsLocation(people, locations, generator, dayDuration);

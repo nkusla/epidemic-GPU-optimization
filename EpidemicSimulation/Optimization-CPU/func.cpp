@@ -1,21 +1,21 @@
 #include "func.h"
 
-void RandomNoRepetition(std::vector<int>* v, std::default_random_engine& generator) {
-	std::shuffle(v->begin(), v->end(), generator);
-
+void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generator) {
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
-		v->push_back(i);
+		v.push_back(i);
 	}
+
+	std::shuffle(v.begin(), v.end(), generator);
 }
 
 void SetAgents(Person* people, std::default_random_engine& generator) {
 	int i, random, firstIndex, lastIndex;
-	int distancingNum = (int)NUM_PEOPLE * DISTANCING_PERCENTAGE;
+	int distancingNum = static_cast<int>(NUM_PEOPLE * DISTANCING_PERCENTAGE);
 
 	std::vector<int> v;
 
-	// Set pople who are distancing
-	RandomNoRepetition(&v, generator);
+	// Set people who are distancing
+	RandomNoRepetition(v, generator);
 	for (i = 0; i < distancingNum; ++i) {
 		people[v[i]].setDistancing(true);
 	}
@@ -51,11 +51,11 @@ void SetAgentsHome(Person* people, std::vector<int>* locations) {
 }
 
 void InfectAgents(Person* people, std::default_random_engine& generator) {
-	int initialInfected = (int)NUM_PEOPLE * INITIAL_INFECTIONS;
+	int initialInfected = static_cast<int>(NUM_PEOPLE * INITIAL_INFECTIONS);
 	
 	std::vector<int> v;
 
-	RandomNoRepetition(&v, generator);
+	RandomNoRepetition(v, generator);
 	for (int i = 0; i < initialInfected; ++i) {
 		people[v[i]].setStatus(I);
 		Person::numInfected++;
