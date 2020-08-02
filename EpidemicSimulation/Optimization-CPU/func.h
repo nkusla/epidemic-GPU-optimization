@@ -2,10 +2,14 @@
 
 #pragma once
 #include <iostream>
+#include <random>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <ctime>
 #include "person.h"
 
-void RandomNoRepetition(std::vector<int>* v, std::default_random_engine& generator);
+void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generator);
 
 void SetAgents(Person* people, std::default_random_engine& generator);
 
@@ -21,6 +25,10 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 
 void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default_random_engine& generator);
 
-void WriteInfo(int simulationTime);
+std::string GetCurrentDate();
 
-void SimulationEndInfo();
+void WriteInfo(int simulationTime, std::string& outputHistory);
+
+void SimulationEndInfo(std::string& outputHistory);
+
+void LogSimulationParameters(std::string& outputHistory);

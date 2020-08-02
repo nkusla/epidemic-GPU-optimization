@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <time.h>
 #include "person.h"
 #include "func.h"
 
@@ -9,6 +8,7 @@ std::default_random_engine generator; // Generator that is used when generating 
 
 const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 std::vector<int> locations[locationArraySize];
+std::string outputHistory;
 
 int main()
 {
@@ -33,10 +33,11 @@ int main()
 			CheckAgentsHealth(people, locations, generator);
 			dayDuration = 0;
 
-			WriteInfo(simulationTime);
+			WriteInfo(simulationTime, outputHistory);
 			Person::changeMaxNewInfected();
 		}
 	}
 
-	SimulationEndInfo();
+	SimulationEndInfo(outputHistory);
+	LogSimulationParameters(outputHistory);
 }

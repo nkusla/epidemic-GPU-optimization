@@ -15,7 +15,7 @@ class Person
 		bool distancing; // Determines if person is social distancing
 		Status status;
 	public:
-		static int numDead, numInfected, numRecovered; // Number of dead, infected and recovered people at the momenz
+		static int numDead, numInfected, numRecovered; // Number of dead, infected and recovered people at the moment
 		static int maxInfected; // Number of infected people since the start of an epidemic
 		static int newInfected; // Number of infected in the same day (new cases)
 		static int maxNewInfected; // Max number of infected on the same days (max new cases)

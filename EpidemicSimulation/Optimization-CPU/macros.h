@@ -2,12 +2,15 @@
 
 #pragma once
 
+// defines how random generator will create random values
 #define SEED 1616
 
+// number
 #define NUM_PEOPLE 10000
 #define POPULAR_PLACES 20
 #define NUM_HOMES 2650
 #define NUM_WORKPLACES 1100
+#define NUM_INTERACTIONS 4
 
 // percentage
 #define INITIAL_INFECTIONS 0.0005
@@ -24,7 +27,5 @@
 #define LOCATION_DURATION 3
 #define DAY_DURATION 18
 
-#define NUM_INTERACTIONS 4
-
-// Status that show if person is infected, recovered, dead...
+// Status that shows if person is infected, recovered, dead...
 enum Status { S, I, R, D };

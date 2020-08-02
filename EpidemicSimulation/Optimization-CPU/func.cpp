@@ -190,18 +190,84 @@ void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default
 	}
 }
 
-void WriteInfo(int simulationTime) {
-	std::cout << "Day " << simulationTime / DAY_DURATION << " - Infected: " << Person::numInfected << " - new cases: " << Person::newInfected << std::endl;
+std::string GetCurrentDate() {
+	time_t now = time(0);
+	tm* tstruct;
+	char buffer[20];
+	tstruct = localtime(&now);
+	strftime(buffer, sizeof(buffer), "%Y.%m.%d. %H-%M-%S", tstruct);
+
+	return buffer;
 }
 
-void SimulationEndInfo() {
+void WriteInfo(int simulationTime, std::string& outputHistory) {
+	std::string output;
+	output = "Day " + std::to_string(simulationTime / DAY_DURATION) + " - Infected: " +
+		std::to_string(Person::numInfected) + " - new cases: " + std::to_string(Person::newInfected) + "\n";
 
-	std::cout << std::endl;
-	std::cout << "Max infected: " << Person::maxInfected << " - " << (float)(100 * Person::maxInfected) / NUM_PEOPLE << "% of population" << std::endl;
-	std::cout << "Peak of epidemic: " << Person::maxNewInfected << " - " << (float)(100 * Person::maxNewInfected) / NUM_PEOPLE << std::endl;
-	
-	std::cout << std::endl;
-	std::cout << "Infected: " << Person::numInfected << " - " << (float)(100 * Person::numInfected) / NUM_PEOPLE << "% of population" << std::endl;
-	std::cout << "Recovered: " << Person::numRecovered << " - " << (float)(100 * Person::numRecovered) / NUM_PEOPLE << "% of population" << std::endl;
-	std::cout << "Dead: " << Person::numDead << " - " << (float)(100 * Person::numDead) / NUM_PEOPLE << "% of population" << std::endl;
+	std::cout << output;
+
+	outputHistory += "\t" + output;
+}
+
+void SimulationEndInfo(std::string& outputHistory) {
+
+	std::string output;
+	double value;
+
+	value = static_cast<double>(100 * Person::maxInfected) / NUM_PEOPLE;
+	output += "\nMax infected: " + std::to_string(Person::maxInfected) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * Person::maxNewInfected) / NUM_PEOPLE;
+	output += "Peak of epidemic: " + std::to_string(Person::maxNewInfected) + " - " + std::to_string(value) + "\n";
+
+	value = static_cast<double>(100 * Person::numInfected) / NUM_PEOPLE;
+	output += "\nInfected: " + std::to_string(Person::numInfected) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * Person::numRecovered) / NUM_PEOPLE;
+	output += "Recovered: " + std::to_string(Person::numRecovered) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * Person::numDead) / NUM_PEOPLE;
+	output += "Dead: " + std::to_string(Person::numDead) + " - " + std::to_string(value) + "% of population\n";
+
+	std::cout << output;
+
+	outputHistory += output;
+}
+
+void LogSimulationParameters(std::string& outputHistory) {
+	std::ofstream file;
+	std::string date = GetCurrentDate();
+	std::string fileName = "../../Results/" + date + ".txt";
+
+	file.open(fileName);
+
+	std::string params;
+	params += "Parameters:\n\n";
+	params += "SEED " + std::to_string(SEED) + "\n\n";
+
+	params += "NUM_PEOPLE " + std::to_string(NUM_PEOPLE) + "\n";
+	params += "POPULAR_PLACES " + std::to_string(POPULAR_PLACES) + "\n";
+	params += "NUM_HOMES " + std::to_string(NUM_HOMES) + "\n";
+	params += "NUM_WORKPLACES " + std::to_string(NUM_WORKPLACES) + "\n";
+	params += "NUM_INTERACTIONS " + std::to_string(NUM_INTERACTIONS) + "\n\n";
+
+	params += "INITIAL_INFECTIONS " + std::to_string(INITIAL_INFECTIONS) + "\n";
+	params += "DISTANCING_PERCENTAGE " + std::to_string(DISTANCING_PERCENTAGE) + "\n";
+	params += "INFECTION_PROBABILITY " + std::to_string(INFECTION_PROBABILITY) + "\n";
+	params += "FATALITY_RATE " + std::to_string(FATALITY_RATE) + "\n\n";
+
+	params += "INFECTION_DURATION " + std::to_string(INFECTION_DURATION) + "\n";
+	params += "SIMULATION_DURATION " + std::to_string(SIMULATION_DURATION) + "\n\n";
+
+	params += "WORK_HOURS " + std::to_string(WORK_HOURS) + "\n";
+	params += "LOCATION_DURATION " + std::to_string(LOCATION_DURATION) + "\n";
+	params += "DAY_DURATION " + std::to_string(DAY_DURATION) + "\n\n";
+
+	params += "--------------------------------------------------------\n\n";
+
+	file << params;
+	file << "Simulation history: \n\n";
+	file << outputHistory;
+	file.close();
 }
