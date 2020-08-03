@@ -193,7 +193,7 @@ void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default
 std::string GetCurrentDate() {
 	time_t now = time(0);
 	tm* tstruct;
-	char buffer[20];
+	char buffer[40];
 	tstruct = localtime(&now);
 	strftime(buffer, sizeof(buffer), "%Y.%m.%d. %H-%M-%S", tstruct);
 
