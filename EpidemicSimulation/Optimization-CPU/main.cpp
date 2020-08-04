@@ -14,7 +14,7 @@ int main()
 {
 	int i = 0, dayDuration = 0, simulationTime = 0;
 	generator.seed(SEED); // Sets seed of generator
-	SetAgents(people, generator);
+	InitiateAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
 
@@ -30,7 +30,7 @@ int main()
 		
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
-			CheckAgentsHealth(people, locations, generator);
+			CheckAgentsStatus(people, locations, generator);
 			dayDuration = 0;
 
 			WriteInfo(simulationTime, outputHistory);

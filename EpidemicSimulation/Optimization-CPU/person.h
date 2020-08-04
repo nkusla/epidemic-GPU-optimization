@@ -12,35 +12,44 @@ class Person
 		int workID;
 		int currentLocation;
 		int infectionDays; // Tracks how long person has been infected
+		int immunityDays; // Tracks how long person has been immune
+		bool wasInfected; // Determines if person was infected at least once
 		bool distancing; // Determines if person is social distancing
 		Status status;
 	public:
 		static int numDead, numInfected, numRecovered; // Number of dead, infected and recovered people at the moment
-		static int maxInfected; // Number of infected people since the start of an epidemic
+		static int maxInfected; // Number of people who have been infected at least once since the start of an epidemic
 		static int newInfected; // Number of infected in the same day (new cases)
 		static int maxNewInfected; // Max number of infected on the same days (max new cases)
 
 		Person();
-		Person(int homeID, int workID, int currentLocation, int infectionDays, bool distancing, Status status);
+		Person(int homeID, int workID, int currentLocation, int infectionDays, bool immunityDays,
+			bool wasInfected, bool distancing, Status status);
 
 		int getHomeID() { return homeID; }
 		int getWorkID() { return workID; }
 		int getCurrentLocation() { return currentLocation; }
 		int getInfectionDays() { return infectionDays; }
-		int getDistancing() { return distancing; }
+		int getImmunityDays() { return immunityDays; }
+		bool getWasInfected() { return wasInfected; }
+		bool getDistancing() { return distancing; }
 		Status getStatus() { return status; }
 
 		void setHomeID(int homeID);
 		void setWorkID(int workID);
 		void setCurrentLocation(int currentLocation);
 		void setInfectionDays(int infectionDays);
+		void setImmunityDays(int immunityDays);
+		void setWasInfected(bool wasInfected);
 		void setDistancing(bool distancing);
 		void setStatus(Status s);
 
 		void ExtendInfectionDay();
+		void ExtendImmunityDay();
 		bool TryInfect(std::default_random_engine& generator, int infectionProbability);
 		bool TryKill(std::default_random_engine& generator, int deathProbability);
 		void RecoverAgent();
+		void MakeAgentSusceptible();
 
 		static void changeMaxNewInfected();
 };

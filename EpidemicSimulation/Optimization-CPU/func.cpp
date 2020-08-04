@@ -8,7 +8,7 @@ void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generat
 	std::shuffle(v.begin(), v.end(), generator);
 }
 
-void SetAgents(Person* people, std::default_random_engine& generator) {
+void InitiateAgents(Person* people, std::default_random_engine& generator) {
 	int i, random, firstIndex, lastIndex;
 	int distancingNum = static_cast<int>(NUM_PEOPLE * DISTANCING_PERCENTAGE);
 
@@ -58,6 +58,7 @@ void InfectAgents(Person* people, std::default_random_engine& generator) {
 	RandomNoRepetition(v, generator);
 	for (int i = 0; i < initialInfected; ++i) {
 		people[v[i]].setStatus(I);
+		people[v[i]].setWasInfected(true);
 		Person::numInfected++;
 		Person::maxInfected++;
 	}
@@ -174,7 +175,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 	}
 }
 
-void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {	
+void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {	
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		if (people[i].getStatus() == I) {
 			if (people[i].TryKill(generator, FATALITY_RATE * 100000)) {
@@ -186,6 +187,15 @@ void CheckAgentsHealth(Person* people, std::vector<int>* locations, std::default
 					people[i].RecoverAgent();
 				}
 			}
+		}
+		else if (people[i].getStatus() == R) {
+			people[i].ExtendImmunityDay();
+			if (people[i].getImmunityDays() == IMMUNITY_DURATION) {
+				people[i].MakeAgentSusceptible();
+			}
+		}
+		else { 
+			continue; 
 		}
 	}
 }
@@ -202,7 +212,7 @@ std::string GetCurrentDate() {
 
 void WriteInfo(int simulationTime, std::string& outputHistory) {
 	std::string output;
-	output = "Day " + std::to_string(simulationTime / DAY_DURATION) + " - Infected: " +
+	output = "Day " + std::to_string(simulationTime / DAY_DURATION) + " - active cases: " +
 		std::to_string(Person::numInfected) + " - new cases: " + std::to_string(Person::newInfected) + "\n";
 
 	std::cout << output;
@@ -238,7 +248,7 @@ void SimulationEndInfo(std::string& outputHistory) {
 void LogSimulationParameters(std::string& outputHistory) {
 	std::ofstream file;
 	std::string date = GetCurrentDate();
-	std::string fileName = "../../Results/" + date + ".txt";
+	std::string fileName = "../../Results/Optimization-CPU/" + date + ".txt";
 
 	file.open(fileName);
 

@@ -13,11 +13,15 @@ Person::Person() {
 	this->workID = -1;
 	this->currentLocation = -1;
 	this->infectionDays = 0;
+	this->immunityDays = 0;
+	this->wasInfected = false;
 	this->distancing = false;
 	this->status = S;
 }
 
-Person::Person(int homeID, int workID, int currentLocation, int infectionDays, bool distancing, Status status){
+Person::Person(int homeID, int workID, int currentLocation, int infectionDays, bool immunityDays, 
+	bool wasInfected, bool distancing, Status status) {
+
 	this->homeID = homeID;
 	this->workID = workID;
 	this->currentLocation = currentLocation;
@@ -26,33 +30,25 @@ Person::Person(int homeID, int workID, int currentLocation, int infectionDays, b
 	this->status = status;
 }
 
-void Person::setHomeID(int homeID) {
-	this->homeID = homeID;
-}
+void Person::setHomeID(int homeID) { this->homeID = homeID; }
 
-void Person::setWorkID(int workID) {
-	this->workID = workID;
-}
+void Person::setWorkID(int workID) { this->workID = workID; }
 
-void Person::setCurrentLocation(int currentLocation) {
-	this->currentLocation = currentLocation;
-}
+void Person::setCurrentLocation(int currentLocation) { this->currentLocation = currentLocation; }
 
-void Person::setInfectionDays(int infectionDays) {
-	this->infectionDays = infectionDays;
-}
+void Person::setInfectionDays(int infectionDays) { this->infectionDays = infectionDays; }
 
-void Person::setDistancing(bool distancing) {
-	this->distancing = distancing;
-}
+void Person::setImmunityDays(int immunityDays) { this->immunityDays = immunityDays; }
 
-void Person::setStatus(Status status) {
-	this->status = status;
-}
+void Person::setWasInfected(bool wasInfected) { this->wasInfected = wasInfected; }
 
-void Person::ExtendInfectionDay() {
-	this->infectionDays++;
-}
+void Person::setDistancing(bool distancing) { this->distancing = distancing; }
+
+void Person::setStatus(Status status) { this->status = status; }
+
+void Person::ExtendInfectionDay() { this->infectionDays++; }
+
+void Person::ExtendImmunityDay() { this->immunityDays++; }
 
 bool Person::TryInfect(std::default_random_engine& generator, int infectionProbability) {
 	std::uniform_int_distribution<int> distribution(1, 100000);
@@ -60,9 +56,16 @@ bool Person::TryInfect(std::default_random_engine& generator, int infectionProba
 	int rand = distribution(generator);
 	if (rand <= infectionProbability) {
 		this->status = I;
-		numInfected++;
-		maxInfected++;
-		newInfected++;
+		if (!this->wasInfected) {
+			this->wasInfected = true;
+			numInfected++;
+			maxInfected++;
+			newInfected++;
+		}
+		else {
+			numInfected++;
+			newInfected++;
+		}
 		return true;
 	}
 	else {
@@ -87,8 +90,15 @@ bool Person::TryKill(std::default_random_engine& generator, int deathProbability
 
 void Person::RecoverAgent() {
 	this->status = R;
+	this->infectionDays = 0;
 	numRecovered++;
 	numInfected--;
+}
+
+void Person::MakeAgentSusceptible() {
+	this->status = S;
+	this->immunityDays = 0;
+	numRecovered--;
 }
 
 void Person::changeMaxNewInfected() {
