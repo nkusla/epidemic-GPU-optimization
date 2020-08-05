@@ -30,11 +30,12 @@ int main()
 		
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
-			CheckAgentsStatus(people, locations, generator);
 			dayDuration = 0;
 
 			WriteInfo(simulationTime, outputHistory);
 			Person::changeMaxNewInfected();
+
+			CheckAgentsStatus(people, locations, generator);
 		}
 	}
 
