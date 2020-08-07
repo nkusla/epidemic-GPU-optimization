@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 #include "person.h"
 #include "func.h"
 
@@ -17,6 +18,8 @@ int main()
 	InitiateAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
+
+	auto start = std::chrono::high_resolution_clock::now();
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
@@ -39,6 +42,11 @@ int main()
 		}
 	}
 
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
 	SimulationEndInfo(outputHistory);
 	LogSimulationParameters(outputHistory);
+
+	std::cout << "\nTIME: " << duration.count() << " ms" << std::endl;
 }

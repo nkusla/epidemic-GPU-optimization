@@ -1,5 +1,7 @@
 #include "func.h"
 
+// ------------------------------------------------------------------------------------------------
+
 void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generator) {
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		v.push_back(i);
@@ -64,22 +66,21 @@ void InfectAgents(Person* people, std::default_random_engine& generator) {
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
+
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int size) {
 	int rand, i, j;
-	std::vector<int> v;
 
 	for (i = 0; i <= size; ++i) {
-
 		if (locations[i].size() > 1) {
 			std::uniform_int_distribution<int> distribution(0, locations[i].size()-1);
-			v = locations[i];
 			for (j = 0; j < locations[i].size(); ++j) {
 				rand = distribution(generator);
-				if (people[v[j]].getStatus() == I && people[v[rand]].getStatus() == S) {
-					people[v[rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+				if (people[locations[i][j]].getStatus() == I && people[locations[i][rand]].getStatus() == S) {
+					people[locations[i][rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
 				}
-				else if (people[v[j]].getStatus() == S && people[v[rand]].getStatus() == I) {
-					people[v[j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+				else if (people[locations[i][j]].getStatus() == S && people[locations[i][rand]].getStatus() == I) {
+					people[locations[i][j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
 				}
 				else { continue; }
 			}
@@ -89,17 +90,14 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 }
 
 void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations) {
-	int currentLocation = person.getCurrentLocation();
-	std::vector<int> v = locations[currentLocation];
+	int currLoc = person.getCurrentLocation();
 
-	for (auto it = v.begin(); it != v.end(); ++it) {
+	for (auto it = locations[currLoc].begin(); it != locations[currLoc].end(); ++it) {
 		if (personIndex == *it) {
-			v.erase(it);
+			locations[currLoc].erase(it);
 			break;
 		}
 	}
-
-	locations[currentLocation] = v;
 }
 
 void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int dayDuration) {
@@ -175,7 +173,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 	}
 }
 
-void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {	
+void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		if (people[i].getStatus() == I) {
 			if (people[i].TryKill(generator, FATALITY_RATE * 100000)) {
@@ -199,6 +197,8 @@ void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default
 		}
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
 
 std::string GetCurrentDate() {
 	time_t now = time(0);
