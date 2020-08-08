@@ -68,6 +68,17 @@ void InfectAgents(Person* people, std::default_random_engine& generator) {
 
 // ------------------------------------------------------------------------------------------------
 
+void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations) {
+	int currLoc = person.getCurrentLocation();
+
+	for (auto it = locations[currLoc].begin(); it != locations[currLoc].end(); ++it) {
+		if (personIndex == *it) {
+			locations[currLoc].erase(it);
+			break;
+		}
+	}
+}
+
 void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int size) {
 	int rand, i, j;
 
@@ -87,17 +98,6 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 		}
 	}
 
-}
-
-void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<int>* locations) {
-	int currLoc = person.getCurrentLocation();
-
-	for (auto it = locations[currLoc].begin(); it != locations[currLoc].end(); ++it) {
-		if (personIndex == *it) {
-			locations[currLoc].erase(it);
-			break;
-		}
-	}
 }
 
 void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int dayDuration) {
@@ -220,7 +220,7 @@ void WriteInfo(int simulationTime, std::string& outputHistory) {
 	outputHistory += "\t" + output;
 }
 
-void SimulationEndInfo(std::string& outputHistory) {
+void SimulationEndInfo(std::string& outputHistory, int executionTime) {
 
 	std::string output;
 	double value;
@@ -239,6 +239,8 @@ void SimulationEndInfo(std::string& outputHistory) {
 
 	value = static_cast<double>(100 * Person::numDead) / NUM_PEOPLE;
 	output += "Dead: " + std::to_string(Person::numDead) + " - " + std::to_string(value) + "% of population\n";
+
+	output += "\nExecution time: " + std::to_string(executionTime) + " ms\n";
 
 	std::cout << output;
 
@@ -268,6 +270,7 @@ void LogSimulationParameters(std::string& outputHistory) {
 	params += "FATALITY_RATE " + std::to_string(FATALITY_RATE) + "\n\n";
 
 	params += "INFECTION_DURATION " + std::to_string(INFECTION_DURATION) + "\n";
+	params += "IMMUNITY_DURATION" + std::to_string(IMMUNITY_DURATION) + "\n";
 	params += "SIMULATION_DURATION " + std::to_string(SIMULATION_DURATION) + "\n\n";
 
 	params += "WORK_HOURS " + std::to_string(WORK_HOURS) + "\n";

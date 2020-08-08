@@ -44,9 +44,8 @@ int main()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	int executionTime = duration.count();
 
-	SimulationEndInfo(outputHistory);
+	SimulationEndInfo(outputHistory, executionTime);
 	LogSimulationParameters(outputHistory);
-
-	std::cout << "\nTIME: " << duration.count() << " ms" << std::endl;
 }
