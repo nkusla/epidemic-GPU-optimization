@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Optimization-CPU", "Optimiz
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld-OpenCl", "HelloWorld-OpenCl\HelloWorld-OpenCl.vcxproj", "{CB32EC90-302F-4DC1-BB4B-1D699333A60B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Optimization-GPU", "Optimization-GPU\Optimization-GPU.vcxproj", "{49DB773C-2ACC-441F-9534-27044EB9CE45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{CB32EC90-302F-4DC1-BB4B-1D699333A60B}.Release|x64.Build.0 = Release|x64
 		{CB32EC90-302F-4DC1-BB4B-1D699333A60B}.Release|x86.ActiveCfg = Release|Win32
 		{CB32EC90-302F-4DC1-BB4B-1D699333A60B}.Release|x86.Build.0 = Release|Win32
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Debug|x64.ActiveCfg = Debug|x64
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Debug|x64.Build.0 = Debug|x64
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Debug|x86.ActiveCfg = Debug|Win32
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Debug|x86.Build.0 = Debug|Win32
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Release|x64.ActiveCfg = Release|x64
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Release|x64.Build.0 = Release|x64
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Release|x86.ActiveCfg = Release|Win32
+		{49DB773C-2ACC-441F-9534-27044EB9CE45}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

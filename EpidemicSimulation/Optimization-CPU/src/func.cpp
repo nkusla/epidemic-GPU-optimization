@@ -270,7 +270,7 @@ void LogSimulationParameters(std::string& outputHistory) {
 	params += "FATALITY_RATE " + std::to_string(FATALITY_RATE) + "\n\n";
 
 	params += "INFECTION_DURATION " + std::to_string(INFECTION_DURATION) + "\n";
-	params += "IMMUNITY_DURATION" + std::to_string(IMMUNITY_DURATION) + "\n";
+	params += "IMMUNITY_DURATION " + std::to_string(IMMUNITY_DURATION) + "\n";
 	params += "SIMULATION_DURATION " + std::to_string(SIMULATION_DURATION) + "\n\n";
 
 	params += "WORK_HOURS " + std::to_string(WORK_HOURS) + "\n";
