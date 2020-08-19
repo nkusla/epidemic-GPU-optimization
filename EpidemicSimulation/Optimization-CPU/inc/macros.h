@@ -6,7 +6,7 @@
 #define SEED 1616
 
 // number
-#define NUM_PEOPLE 80000
+#define NUM_PEOPLE 10
 #define POPULAR_PLACES 40
 #define NUM_HOMES 22000
 #define NUM_WORKPLACES 9500

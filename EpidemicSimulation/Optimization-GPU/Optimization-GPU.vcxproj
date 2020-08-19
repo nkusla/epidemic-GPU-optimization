@@ -19,7 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test-compute.cpp" />
+    <ClCompile Include="..\Optimization-CPU\src\person.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Optimization-CPU\Optimization-CPU.vcxproj">
+      <Project>{ee92489c-d2ac-4b22-8a5d-cce5cb50af25}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -123,7 +129,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,7 +146,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

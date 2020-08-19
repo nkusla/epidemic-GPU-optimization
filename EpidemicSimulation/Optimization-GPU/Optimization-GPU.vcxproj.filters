@@ -11,7 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test-compute.cpp">
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Optimization-CPU\src\person.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
