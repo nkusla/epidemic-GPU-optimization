@@ -4,12 +4,17 @@
 #include "person.h"
 #include "func.h"
 
+extern std::vector<int> generatedRandNumbers;
+
 Person people[NUM_PEOPLE]; // Array of people
 std::default_random_engine generator; // Generator that is used when generating numbers
+std::vector<int> rngVector; // Stores all random number that have been generated
 
 const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 std::vector<int> locations[locationArraySize];
-std::string outputHistory;
+
+std::string outputHistory; // Stores output to console
+std::string date = GetCurrentDate(); // Date is used for file names
 
 int main()
 {
@@ -23,9 +28,9 @@ int main()
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
-		ChangeAgentsLocation(people, locations, generator, dayDuration);
+		ChangeAgentsLocation(people, locations, generator, dayDuration, rngVector);
 		while (i < NUM_INTERACTIONS) {
-			MakeInteractions(people, locations, generator, locationArraySize - 1);
+			MakeInteractions(people, locations, generator, locationArraySize - 1, rngVector);
 			++i;
 		}
 		i = 0;
@@ -38,7 +43,8 @@ int main()
 			WriteInfo(simulationTime, outputHistory);
 			Person::changeMaxNewInfected();
 
-			CheckAgentsStatus(people, locations, generator);
+			CheckAgentsStatus(people, locations, generator, rngVector);
+			//LogGeneratedRandomNumbers(rngVector, date);
 		}
 	}
 
@@ -47,5 +53,5 @@ int main()
 	int executionTime = duration.count();
 
 	SimulationEndInfo(outputHistory, executionTime);
-	LogSimulationParameters(outputHistory);
+	LogSimulationParameters(outputHistory, date);
 }

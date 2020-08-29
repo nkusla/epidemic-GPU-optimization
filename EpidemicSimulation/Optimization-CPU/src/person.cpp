@@ -50,10 +50,11 @@ void Person::ExtendInfectionDay() { this->infectionDays++; }
 
 void Person::ExtendImmunityDay() { this->immunityDays++; }
 
-bool Person::TryInfect(std::default_random_engine& generator, int infectionProbability) {
+bool Person::TryInfect(std::default_random_engine& generator, int infectionProbability, std::vector<int>& rngVector) {
 	std::uniform_int_distribution<int> distribution(1, 100000);
 
 	int rand = distribution(generator);
+	//rngVector.push_back(rand);
 	if (rand <= infectionProbability) {
 		this->status = I;
 		if (!this->wasInfected) {
@@ -73,10 +74,11 @@ bool Person::TryInfect(std::default_random_engine& generator, int infectionProba
 	}
 }
 
-bool Person::TryKill(std::default_random_engine& generator, int deathProbability) {
+bool Person::TryKill(std::default_random_engine& generator, int deathProbability, std::vector<int>& rngVector) {
 	std::uniform_int_distribution<int> distribution(1, 100000);
 
 	int rand = distribution(generator);
+	//rngVector.push_back(rand);
 	if (rand <= deathProbability) {
 		this->status = D;
 		numDead++;

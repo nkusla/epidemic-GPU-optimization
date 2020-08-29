@@ -1,9 +1,13 @@
 // In this file class Person is defined. Every agent in the simulation is instance of class Person
+// Class GlobalVars stores paths and vector that saves random numbers that were generated
 
 #pragma once
 #include <iostream>
 #include <random>
 #include "macros.h"
+
+// Status that shows if person is infected, recovered, dead...
+enum Status { S, I, R, D };
 
 class Person
 {	
@@ -46,8 +50,8 @@ class Person
 
 		void ExtendInfectionDay();
 		void ExtendImmunityDay();
-		bool TryInfect(std::default_random_engine& generator, int infectionProbability);
-		bool TryKill(std::default_random_engine& generator, int deathProbability);
+		bool TryInfect(std::default_random_engine& generator, int infectionProbability, std::vector<int>& rngVector);
+		bool TryKill(std::default_random_engine& generator, int deathProbability, std::vector<int>& rngVector);
 		void RecoverAgent();
 		void MakeAgentSusceptible();
 

@@ -79,7 +79,9 @@ void RemoveAgentFromCurrentLocation(Person person, int personIndex, std::vector<
 	}
 }
 
-void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int size) {
+void MakeInteractions(Person* people, std::vector<int>* locations, std::default_random_engine& generator, 
+	int size, std::vector<int>& rngVector) {
+
 	int rand, i, j;
 
 	for (i = 0; i <= size; ++i) {
@@ -87,11 +89,12 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 			std::uniform_int_distribution<int> distribution(0, locations[i].size()-1);
 			for (j = 0; j < locations[i].size(); ++j) {
 				rand = distribution(generator);
+				//rngVector.push_back(rand);
 				if (people[locations[i][j]].getStatus() == I && people[locations[i][rand]].getStatus() == S) {
-					people[locations[i][rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+					people[locations[i][rand]].TryInfect(generator, INFECTION_PROBABILITY * 100000, rngVector);
 				}
 				else if (people[locations[i][j]].getStatus() == S && people[locations[i][rand]].getStatus() == I) {
-					people[locations[i][j]].TryInfect(generator, INFECTION_PROBABILITY * 100000);
+					people[locations[i][j]].TryInfect(generator, INFECTION_PROBABILITY * 100000, rngVector);
 				}
 				else { continue; }
 			}
@@ -100,7 +103,9 @@ void MakeInteractions(Person* people, std::vector<int>* locations, std::default_
 
 }
 
-void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine& generator, int dayDuration) {
+void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::default_random_engine& generator, 
+	int dayDuration, std::vector<int>& rngVector) {
+
 	// Upper and lower indexes that will be used when accessing locations of agents
 	const int homeIndexFirst = 0;
 	const int homeIndexLast = NUM_HOMES - 1;
@@ -135,6 +140,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
 				if (!people[v[j]].getDistancing()) {
 					locationID = distributionPopularPlaces(generator);
+					//rngVector.push_back(locationID);
 					locations[locationID].push_back(v[j]);
 					people[v[j]].setCurrentLocation(locationID);
 				}
@@ -153,6 +159,7 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 			for (j = 0; j < v.size(); ++j) {
 				RemoveAgentFromCurrentLocation(people[v[j]], v[j], locations);
 				locationID = distributionPopularPlaces(generator);
+				//rngVector.push_back(locationID);
 				locations[locationID].push_back(v[j]);
 				people[v[j]].setCurrentLocation(locationID);
 			}
@@ -173,10 +180,12 @@ void ChangeAgentsLocation(Person* people, std::vector<int>* locations, std::defa
 	}
 }
 
-void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default_random_engine& generator) {
+void CheckAgentsStatus(Person* people, std::vector<int>* locations, std::default_random_engine& generator, 
+	std::vector<int>& rngVector) {
+
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
 		if (people[i].getStatus() == I) {
-			if (people[i].TryKill(generator, FATALITY_RATE * 100000)) {
+			if (people[i].TryKill(generator, FATALITY_RATE * 100000, rngVector)) {
 				RemoveAgentFromCurrentLocation(people[i], i, locations);
 			}
 			else {
@@ -208,6 +217,11 @@ std::string GetCurrentDate() {
 	strftime(buffer, sizeof(buffer), "%Y.%m.%d. %H-%M-%S", tstruct);
 
 	return buffer;
+}
+
+std::string GetFileName(std::string path, std::string date) {
+	std::string fileName = path + date + ".txt";
+	return fileName;
 }
 
 void WriteInfo(int simulationTime, std::string& outputHistory) {
@@ -247,11 +261,9 @@ void SimulationEndInfo(std::string& outputHistory, int executionTime) {
 	outputHistory += output;
 }
 
-void LogSimulationParameters(std::string& outputHistory) {
+void LogSimulationParameters(std::string& outputHistory, std::string date) {
 	std::ofstream file;
-	std::string date = GetCurrentDate();
-	std::string fileName = "../../Results/Optimization-CPU/" + date + ".txt";
-
+	std::string fileName = GetFileName(resultsPath, date);
 	file.open(fileName);
 
 	std::string params;
@@ -282,5 +294,19 @@ void LogSimulationParameters(std::string& outputHistory) {
 	file << params;
 	file << "Simulation history: \n\n";
 	file << outputHistory;
+	file.close();
+}
+
+void LogGeneratedRandomNumbers(std::vector<int>& rngVector, std::string date) {
+	std::ofstream file;
+	std::string fileName = GetFileName(generatedRandNumPath, date);
+	file.open(fileName, std::ios::app);
+	
+	for (int i = 0; i < rngVector.size(); ++i) {
+		file << std::to_string(rngVector[i]) << "\n";
+	}
+	file << "\n";
+
+	rngVector.clear();
 	file.close();
 }

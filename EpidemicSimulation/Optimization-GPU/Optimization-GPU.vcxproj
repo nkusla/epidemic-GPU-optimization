@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Optimization-CPU\src\func.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\person.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -26,6 +27,11 @@
     <ProjectReference Include="..\Optimization-CPU\Optimization-CPU.vcxproj">
       <Project>{ee92489c-d2ac-4b22-8a5d-cce5cb50af25}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Optimization-CPU\inc\func.h" />
+    <ClInclude Include="..\Optimization-CPU\inc\macros.h" />
+    <ClInclude Include="..\Optimization-CPU\inc\person.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -146,7 +152,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;$(SolutionDir)OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +160,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\Nikola\Desktop\ep-GPU-opt\EpidemicSimulation\OpenCL\lib\64-bit;C:\Boost\boost_1_74_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenCL\lib\64-bit;C:\Boost\boost_1_74_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
