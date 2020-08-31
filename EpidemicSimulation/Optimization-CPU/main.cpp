@@ -4,10 +4,10 @@
 #include "person.h"
 #include "func.h"
 
-extern std::vector<int> generatedRandNumbers;
+std::vector<int> generatedRandNumbers;
 
 Person people[NUM_PEOPLE]; // Array of people
-std::default_random_engine generator; // Generator that is used when generating numbers
+std::default_random_engine generator(SEED); // Generator that is used when generating numbers
 std::vector<int> rngVector; // Stores all random number that have been generated
 
 const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
@@ -18,8 +18,7 @@ std::string date = GetCurrentDate(); // Date is used for file names
 
 int main()
 {
-	int i = 0, dayDuration = 0, simulationTime = 0;
-	generator.seed(SEED); // Sets seed of generator
+	int i = 0, dayDuration = 0, simulationTime = 0, maxLocationSize = 0;
 	InitiateAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
@@ -28,6 +27,7 @@ int main()
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
+		//GetMaxPeopleOnLocation(locations, locationArraySize, maxLocationSize);
 		ChangeAgentsLocation(people, locations, generator, dayDuration, rngVector);
 		while (i < NUM_INTERACTIONS) {
 			MakeInteractions(people, locations, generator, locationArraySize - 1, rngVector);
@@ -47,11 +47,12 @@ int main()
 			//LogGeneratedRandomNumbers(rngVector, date);
 		}
 	}
-
+	
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 	int executionTime = duration.count();
 
-	SimulationEndInfo(outputHistory, executionTime);
+	SimulationEndInfo(outputHistory, executionTime, maxLocationSize);
+
 	LogSimulationParameters(outputHistory, date);
 }

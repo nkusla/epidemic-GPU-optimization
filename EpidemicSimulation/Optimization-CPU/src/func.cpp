@@ -10,6 +10,14 @@ void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generat
 	std::shuffle(v.begin(), v.end(), generator);
 }
 
+void GetMaxPeopleOnLocation(std::vector<int>* locations, const int locationsArraySize, int& maxSize) {
+	for (int i = 0; i < locationsArraySize; ++i) {
+		if (locations[i].size() >= maxSize) {
+			maxSize = locations[i].size();
+		}
+	}
+}
+
 void InitiateAgents(Person* people, std::default_random_engine& generator) {
 	int i, random, firstIndex, lastIndex;
 	int distancingNum = static_cast<int>(NUM_PEOPLE * DISTANCING_PERCENTAGE);
@@ -234,7 +242,7 @@ void WriteInfo(int simulationTime, std::string& outputHistory) {
 	outputHistory += "\t" + output;
 }
 
-void SimulationEndInfo(std::string& outputHistory, int executionTime) {
+void SimulationEndInfo(std::string& outputHistory, int executionTime, int maxLocationSize) {
 
 	std::string output;
 	double value;
@@ -254,7 +262,11 @@ void SimulationEndInfo(std::string& outputHistory, int executionTime) {
 	value = static_cast<double>(100 * Person::numDead) / NUM_PEOPLE;
 	output += "Dead: " + std::to_string(Person::numDead) + " - " + std::to_string(value) + "% of population\n";
 
-	output += "\nExecution time: " + std::to_string(executionTime) + " ms\n";
+	output += "\nExecution time: " + std::to_string(executionTime) + " ms";
+
+	if (maxLocationSize != 0) {
+		output += "\nMax num of people on one location: " + std::to_string(maxLocationSize) + "\n";
+	}
 
 	std::cout << output;
 

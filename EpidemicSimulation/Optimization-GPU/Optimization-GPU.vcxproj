@@ -22,6 +22,7 @@
     <ClCompile Include="..\Optimization-CPU\src\func.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\person.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Optimization-CPU\Optimization-CPU.vcxproj">
@@ -32,6 +33,7 @@
     <ClInclude Include="..\Optimization-CPU\inc\func.h" />
     <ClInclude Include="..\Optimization-CPU\inc\macros.h" />
     <ClInclude Include="..\Optimization-CPU\inc\person.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

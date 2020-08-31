@@ -15,6 +15,8 @@ static std::string generatedRandNumPath = "../../Results/Optimization-CPU/Genera
 
 void RandomNoRepetition(std::vector<int>& v, std::default_random_engine& generator);
 
+void GetMaxPeopleOnLocation(std::vector<int>* locations, const int locationArraySize, int& maxSize);
+
 void InitiateAgents(Person* people, std::default_random_engine& generator);
 
 void SetAgentsHome(Person* people, std::vector<int>* locations);
@@ -42,7 +44,7 @@ std::string GetFileName(std::string path, std::string date);
 
 void WriteInfo(int simulationTime, std::string& outputHistory);
 
-void SimulationEndInfo(std::string& outputHistory, int executionTime);
+void SimulationEndInfo(std::string& outputHistory, int executionTime, int maxLocationSize);
 
 void LogSimulationParameters(std::string& outputHistory, std::string date);
 

@@ -28,9 +28,6 @@
     <ClInclude Include="inc\macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\paths.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\person.h">
       <Filter>Header Files</Filter>
     </ClInclude>

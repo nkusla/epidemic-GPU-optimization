@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClInclude Include="inc\func.h" />
     <ClInclude Include="inc\macros.h" />
-    <ClInclude Include="inc\paths.h" />
     <ClInclude Include="inc\person.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -9,26 +9,38 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\Opt-CPU">
+      <UniqueIdentifier>{4b99cf6f-d405-44be-985e-9afbea76c398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Opt-CPU">
+      <UniqueIdentifier>{234fc8af-0b73-455b-8537-6b622e194629}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Optimization-CPU\src\person.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Opt-CPU</Filter>
     </ClCompile>
     <ClCompile Include="..\Optimization-CPU\src\func.cpp">
+      <Filter>Source Files\Opt-CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Optimization-CPU\inc\person.h">
+      <Filter>Header Files\Opt-CPU</Filter>
+    </ClInclude>
     <ClInclude Include="..\Optimization-CPU\inc\func.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Opt-CPU</Filter>
     </ClInclude>
     <ClInclude Include="..\Optimization-CPU\inc\macros.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Opt-CPU</Filter>
     </ClInclude>
-    <ClInclude Include="..\Optimization-CPU\inc\person.h">
+    <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
