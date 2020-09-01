@@ -13,7 +13,7 @@ namespace compute = boost::compute;
 
 compute::buffer CreateIntBuffer(int value);
 
-compute::buffer InitData(compute::array<Person, NUM_PEOPLE> peopleDevice);
+compute::buffer InitData(compute::array<Person, NUM_PEOPLE>& peopleDevice);
 
 void SingleLocationBySingleThread();
 
