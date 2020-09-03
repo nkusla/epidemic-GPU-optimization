@@ -9,21 +9,21 @@
 #define TEMPERING_MASK_C 0xefc60000
 
 typedef struct {
-  unsigned long mt[STATE_VECTOR_LENGTH];
+  int mt[STATE_VECTOR_LENGTH];
   int index;
 } MTRand;
 
-__kernel void InitSeed(__global MTRand* rand, unsigned long seed) {
+void InitSeed(__global MTRand* rand, int seed) {
   rand->mt[0] = seed & 0xffffffff;
   for(rand->index=1; rand->index<STATE_VECTOR_LENGTH; rand->index++) {
     rand->mt[rand->index] = (6069 * rand->mt[rand->index-1]) & 0xffffffff;
   }
 }
 
-unsigned long Generate(__global MTRand* rand) {
+int Generate(__global MTRand* rand) {
 
-  unsigned long y;
-  unsigned long mag[2] = {0x0, 0x9908b0df};
+  int y;
+  int mag[2] = {0x0, 0x9908b0df};
   if(rand->index >= STATE_VECTOR_LENGTH || rand->index < 0) {
     int kk;
     if(rand->index >= STATE_VECTOR_LENGTH+1 || rand->index < 0) {
@@ -50,7 +50,7 @@ unsigned long Generate(__global MTRand* rand) {
   return y;
 }
 
-unsigned long GenerateNumInRange(__global MTRand* rand, int min, int max){
+int GenerateNumInRange(__global MTRand* rand, int min, int max){
   return (Generate(rand) % (max - min + 1)) + min;
 }
 

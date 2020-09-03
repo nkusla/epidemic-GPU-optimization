@@ -13,30 +13,45 @@ typedef struct {
     enum Status status;
 } Person;
 
-bool TryInfect(__global Person* p, __global MTRand* generator, __global int* infectionProbability) {
+void TryInfect(__global Person* p, __global MTRand* generator, __global int* INFECTION_DURATION,
+    __global int* numInfected, __global int* maxInfected) {
 
-    if(GenerateNumInRange(generator, 1, 100000) <= *infectionProbability){
+    if(GenerateNumInRange(generator, 1, 100000) <= *INFECTION_DURATION){
+        p->status = I;
         if(!p->wasInfected){
-            p->status = I;
             p->wasInfected = true;
-            return true;
+            (*numInfected)++;
+            (*maxInfected)++;
+        }
+        else{
+            (*numInfected)++;
         }
     }
-    else{
+}
+
+bool TryKill(__global Person* p, __global MTRand* generator, __global int* FATALITY_RATE,
+    __global int* numInfected, __global int* numDead) {
+
+    if(GenerateNumInRange(generator, 1, 100000) <= *FATALITY_RATE){
+        p->status = D;
+        (*numDead)++;
+        (*numInfected)--;
+        return true;
+    } 
+    else {
         return false;
     }
 }
 
-bool TryKill(__global Person* p, __global MTRand* generator, __global int* deathProbability) {
+void RecoverAgent(__global Person* p, __global int* numInfected, __global int* numRecovered){
+    p->status = R;
+    p->infectionDays = 0;
+    (*numRecovered)++;
+    (*numInfected)--;
+}
 
-    if(GenerateNumInRange(generator, 1, 100000) <= *deathProbability){
-        if(!p->wasInfected){
-            p->status = D;
-            p->wasInfected = true;
-            return true;
-        }
-    }
-    else{
-        return false;
-    }
+void MakeAgentSusceptible(__global Person* p, __global int* numRecovered) {
+	p->status = S;
+	p->immunityDays = 0;
+	(*numRecovered)--;
 }

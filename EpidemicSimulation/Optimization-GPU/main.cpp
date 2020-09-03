@@ -3,6 +3,5 @@
 int main()
 {
 	SingleLocationBySingleThread();
-
 	return 0;
 }

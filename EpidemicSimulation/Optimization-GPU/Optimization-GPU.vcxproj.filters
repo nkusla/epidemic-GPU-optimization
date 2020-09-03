@@ -29,6 +29,9 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mtwister.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Optimization-CPU\inc\person.h">
@@ -41,6 +44,9 @@
       <Filter>Header Files\Opt-CPU</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mtwister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
