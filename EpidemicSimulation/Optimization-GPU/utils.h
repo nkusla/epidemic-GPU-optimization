@@ -12,11 +12,13 @@
 
 namespace compute = boost::compute;
 
-compute::buffer CreateIntBuffer(int value);
+compute::buffer* CreateIntBuffer(int value);
+
+void UpdateIntBuffer(compute::buffer* buff, int value);
 
 void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, compute::kernel& InitGeneratorsKernel);
 
-void InitData(compute::vector<Person>& peopleDevice, compute::buffer& locationsDevice);
+void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPeopleOnLocationsDevice, compute::buffer& locationsOnDevice);
 
 void SingleLocationBySingleThread();
 
