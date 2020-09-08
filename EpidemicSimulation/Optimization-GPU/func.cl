@@ -118,19 +118,21 @@ __kernel void MoveAgentsToLocations(__global int* locations, __global int* width
     
     int w = *width;
     for(int id = 0; id < *NUM_PEOPLE; ++id){
-        int locationID = people[id].currentLocation;
+        if(people[id].status != D){
+            int locationID = people[id].currentLocation;
 
-        bool hasMoved = false;
-        int i = 0;
+            bool hasMoved = false;
+            int i = 0;
 
-        while(!hasMoved){
-            if(locations[locationID * w + i] == -1){
-                locations[locationID * w + i] = id;
-                numPeopleOnLocations[locationID]++;
-                hasMoved = true;
-            }
-            else{
-                i++;
+            while(!hasMoved){
+                if(locations[locationID * w + i] == -1){
+                    locations[locationID * w + i] = id;
+                    numPeopleOnLocations[locationID]++;
+                    hasMoved = true;
+                }
+                else{
+                    i++;
+                }
             }
         }
     }

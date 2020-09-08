@@ -29,12 +29,40 @@ void UpdateIntBuffer(compute::buffer* buff, int value) {
 	queue.finish();
 }
 
+void BufferSimulationEndInfo(compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
+	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff){
+
+	int numInfected, numRecovered, numDead, maxInfected;
+	std::string output;
+	double value;
+
+	queue.enqueue_read_buffer(*maxInfectedBuff, 0, sizeof(int), &maxInfected);
+	queue.enqueue_read_buffer(*numInfectedBuff, 0, sizeof(int), &numInfected);
+	queue.enqueue_read_buffer(*numRecoveredBuff, 0, sizeof(int), &numRecovered);
+	queue.enqueue_read_buffer(*numDeadBuff, 0, sizeof(int), &numDead);
+	queue.finish();
+
+	value = static_cast<double>(100 * maxInfected) / NUM_PEOPLE;
+	output += "\nMax infected: " + std::to_string(maxInfected) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * numInfected) / NUM_PEOPLE;
+	output += "\nInfected: " + std::to_string(numInfected) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * numRecovered) / NUM_PEOPLE;
+	output += "Recovered: " + std::to_string(numRecovered) + " - " + std::to_string(value) + "% of population\n";
+
+	value = static_cast<double>(100 * numDead) / NUM_PEOPLE;
+	output += "Dead: " + std::to_string(numDead) + " - " + std::to_string(value) + "% of population\n";
+
+	std::cout << output << std::endl;
+}
+
 void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, compute::kernel& InitGeneratorsKernel) {
 
 	std::vector<int> seedsHost;
 	compute::vector<int> seedsDevice(NUM_PEOPLE, context);
 	for (int i = 0; i < NUM_PEOPLE; ++i) {
-		seedsHost.push_back(i * 5);
+		seedsHost.push_back(i * 111);
 	}
 
 	compute::copy(seedsHost.begin(), seedsHost.end(), seedsDevice.begin(), queue);
@@ -91,6 +119,8 @@ void SingleLocationBySingleThread() {
 	compute::vector<int> numPeopleOnLocationsDevice(mainSize, context);
 	compute::vector<MTRand> randGeneratorsDevice(NUM_PEOPLE, context);
 	
+	InitData(peopleDevice, numPeopleOnLocationsDevice, locationsOnDevice);
+
 	compute::buffer* maxLocationSizeBuff = CreateIntBuffer(maxLocationSize);
 
 	compute::buffer* NUM_PEOPLE_Buff = CreateIntBuffer(NUM_PEOPLE);
@@ -100,8 +130,9 @@ void SingleLocationBySingleThread() {
 	compute::buffer* WORK_HOURS_Buff = CreateIntBuffer(WORK_HOURS);
 	compute::buffer* LOCATION_DURATION_Buff = CreateIntBuffer(LOCATION_DURATION);
 
-	compute::buffer* INFECTION_PROBABILITY_Buff = CreateIntBuffer(INFECTION_PROBABILITY * 10000);
-	compute::buffer* FATALITY_RATE_Buff = CreateIntBuffer(FATALITY_RATE * 10000);
+	compute::buffer* INFECTION_PROBABILITY_Buff = CreateIntBuffer(INFECTION_PROBABILITY * 100000);
+	compute::buffer* FATALITY_RATE_Buff = CreateIntBuffer(FATALITY_RATE * 100000);
+	compute::buffer* INFECTION_DURATION_Buff = CreateIntBuffer(INFECTION_DURATION);
 	compute::buffer* IMMUNITY_DURATION_Buff = CreateIntBuffer(IMMUNITY_DURATION);
 
 	compute::buffer* numInfectedBuff = CreateIntBuffer(Person::numInfected);
@@ -116,8 +147,6 @@ void SingleLocationBySingleThread() {
 	compute::buffer* dayDurationBuff = CreateIntBuffer(dayDuration);
 
 	// ----- Preparing data and kernels ---------------------------------------------------------------
-
-	InitData(peopleDevice, numPeopleOnLocationsDevice, locationsOnDevice);
 
 	compute::program funcProgram = compute::program::create_with_source_file("func.cl", context);
 
@@ -148,7 +177,7 @@ void SingleLocationBySingleThread() {
 	compute::kernel CheckAgentsStatusKernel = funcProgram.create_kernel("CheckAgentsStatus");
 	CheckAgentsStatusKernel.set_arg(0, peopleDevice);
 	CheckAgentsStatusKernel.set_arg(1, randGeneratorsDevice);
-	CheckAgentsStatusKernel.set_arg(2, sizeof(*INFECTION_PROBABILITY_Buff), INFECTION_PROBABILITY_Buff);
+	CheckAgentsStatusKernel.set_arg(2, sizeof(*INFECTION_DURATION_Buff), INFECTION_DURATION_Buff);
 	CheckAgentsStatusKernel.set_arg(3, sizeof(*FATALITY_RATE_Buff), FATALITY_RATE_Buff);
 	CheckAgentsStatusKernel.set_arg(4, sizeof(*IMMUNITY_DURATION_Buff), IMMUNITY_DURATION_Buff);
 	CheckAgentsStatusKernel.set_arg(5, sizeof(*numInfectedBuff), numInfectedBuff);
@@ -214,5 +243,7 @@ void SingleLocationBySingleThread() {
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 	int executionTime = duration.count();
 
-	std::cout << "Time: " << executionTime << " ms" << std::endl;
+	BufferSimulationEndInfo(numInfectedBuff, numRecoveredBuff, numDeadBuff, maxInfectedBuff);
+
+	std::cout << "\nTime: " << executionTime << " ms" << std::endl;
 }

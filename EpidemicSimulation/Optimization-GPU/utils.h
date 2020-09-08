@@ -16,6 +16,9 @@ compute::buffer* CreateIntBuffer(int value);
 
 void UpdateIntBuffer(compute::buffer* buff, int value);
 
+void BufferSimulationEndInfo(compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
+	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff);
+
 void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, compute::kernel& InitGeneratorsKernel);
 
 void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPeopleOnLocationsDevice, compute::buffer& locationsOnDevice);

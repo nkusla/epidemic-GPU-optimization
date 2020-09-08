@@ -13,10 +13,10 @@ typedef struct {
     enum Status status;
 } Person;
 
-void TryInfect(__global Person* p, __global MTRand* generator, __global int* INFECTION_DURATION,
+void TryInfect(__global Person* p, __global MTRand* generator, __global int* INFECTION_PROBABILITY,
     __global int* numInfected, __global int* maxInfected) {
 
-    if(GenerateNumInRange(generator, 1, 100000) <= *INFECTION_DURATION){
+    if(GenerateNumInRange(generator, 1, 100000) <= *INFECTION_PROBABILITY){
         p->status = I;
         if(!p->wasInfected){
             p->wasInfected = true;
