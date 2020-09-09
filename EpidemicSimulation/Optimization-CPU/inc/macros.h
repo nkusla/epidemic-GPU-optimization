@@ -6,10 +6,10 @@
 #define SEED 1616
 
 // number
-#define NUM_PEOPLE 100000
-#define POPULAR_PLACES 45
-#define NUM_HOMES 27000
-#define NUM_WORKPLACES 12200
+#define NUM_PEOPLE 10000
+#define POPULAR_PLACES 15
+#define NUM_HOMES 2650
+#define NUM_WORKPLACES 1100
 #define NUM_INTERACTIONS 4
 
 // percentage
@@ -21,7 +21,7 @@
 // days
 #define INFECTION_DURATION 12
 #define IMMUNITY_DURATION 21
-#define SIMULATION_DURATION 20
+#define SIMULATION_DURATION 60
 
 // hours
 #define WORK_HOURS 8

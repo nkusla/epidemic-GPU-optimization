@@ -134,6 +134,7 @@ void SingleLocationBySingleThread() {
 	compute::buffer* FATALITY_RATE_Buff = CreateIntBuffer(FATALITY_RATE * 100000);
 	compute::buffer* INFECTION_DURATION_Buff = CreateIntBuffer(INFECTION_DURATION);
 	compute::buffer* IMMUNITY_DURATION_Buff = CreateIntBuffer(IMMUNITY_DURATION);
+	compute::buffer* DAY_DURATION_Buff = CreateIntBuffer(DAY_DURATION);
 
 	compute::buffer* numInfectedBuff = CreateIntBuffer(Person::numInfected);
 	compute::buffer* numRecoveredBuff = CreateIntBuffer(Person::numRecovered);
@@ -204,33 +205,36 @@ void SingleLocationBySingleThread() {
 	MoveAgentsToLocationsKernel.set_arg(3, peopleDevice);
 	MoveAgentsToLocationsKernel.set_arg(4, sizeof(*NUM_PEOPLE_Buff), NUM_PEOPLE_Buff);
 
+	compute::kernel UpdateDayDurationKernel = funcProgram.create_kernel("UpdateDayDuration");
+	UpdateDayDurationKernel.set_arg(0, sizeof(*DAY_DURATION_Buff), DAY_DURATION_Buff);
+	UpdateDayDurationKernel.set_arg(1, sizeof(*dayDurationBuff), dayDurationBuff);
+
 	// ----- Main -------------------------------------------------------------------------------------
 
+	queue.finish();
+	std::cout << "Simulation start: \n" << std::endl;
 	auto start = std::chrono::high_resolution_clock::now();
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 		
 		global_dimensions[0] = mainSize;
 		queue.enqueue_nd_range_kernel(ChangeAgentsLocationKernel, work_dim, NULL, global_dimensions, NULL);
-		queue.finish();
 
 		queue.enqueue_task(MoveAgentsToLocationsKernel);
-		queue.finish();
 
 		while (i < NUM_INTERACTIONS) {
 			global_dimensions[0] = mainSize;
 			queue.enqueue_nd_range_kernel(MakeInteractionsKernel, work_dim, NULL, global_dimensions, NULL);
-			queue.finish();
 			++i;
 		}
 		i = 0;
 		dayDuration += 1;
-		UpdateIntBuffer(dayDurationBuff, dayDuration);
+		queue.enqueue_task(UpdateDayDurationKernel);
 
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
 			dayDuration = 0;
-			UpdateIntBuffer(dayDurationBuff, dayDuration);
+			queue.enqueue_task(UpdateDayDurationKernel);
 
 			global_dimensions[0] = NUM_PEOPLE;
 			queue.enqueue_nd_range_kernel(CheckAgentsStatusKernel, work_dim, NULL, global_dimensions, NULL);

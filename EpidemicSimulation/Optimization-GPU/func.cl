@@ -137,3 +137,13 @@ __kernel void MoveAgentsToLocations(__global int* locations, __global int* width
         }
     }
 }
+
+__kernel void UpdateDayDuration(__global int* dayDuration, __global int* DAY_DURATION){
+    
+    if(*dayDuration == *DAY_DURATION){
+        *dayDuration = 0;
+    }
+    else{
+        (*dayDuration)++;
+    }
+}
