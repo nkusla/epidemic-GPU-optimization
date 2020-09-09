@@ -1,3 +1,5 @@
+#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable
+
 #include "struct.cl"
 #include "mtwister.cl"
 
@@ -117,22 +119,22 @@ __kernel void MoveAgentsToLocations(__global int* locations, __global int* width
     __global Person* people, __global int* NUM_PEOPLE){
     
     int w = *width;
-    for(int id = 0; id < *NUM_PEOPLE; ++id){
-        if(people[id].status != D){
-            int locationID = people[id].currentLocation;
+    int id = get_global_id(0);
+    if(people[id].status != D){
+        int locationID = people[id].currentLocation;
 
-            bool hasMoved = false;
-            int i = 0;
+        bool hasMoved = false;
+        int i = 0;
 
-            while(!hasMoved){
-                if(locations[locationID * w + i] == -1){
-                    locations[locationID * w + i] = id;
-                    numPeopleOnLocations[locationID]++;
-                    hasMoved = true;
-                }
-                else{
-                    i++;
-                }
+        while(!hasMoved){
+            int val = atomic_cmpxchg(locations + (locationID * w + i), -1, 69);
+            if(val == -1){
+                atomic_add(locations + (locationID * w + i), id + 1);
+                atomic_inc(numPeopleOnLocations + locationID);
+                hasMoved = true;
+            }
+            else{
+                i++;
             }
         }
     }

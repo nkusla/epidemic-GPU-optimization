@@ -220,7 +220,8 @@ void SingleLocationBySingleThread() {
 		global_dimensions[0] = mainSize;
 		queue.enqueue_nd_range_kernel(ChangeAgentsLocationKernel, work_dim, NULL, global_dimensions, NULL);
 
-		queue.enqueue_task(MoveAgentsToLocationsKernel);
+		global_dimensions[0] = NUM_PEOPLE;
+		queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
 
 		while (i < NUM_INTERACTIONS) {
 			global_dimensions[0] = mainSize;
