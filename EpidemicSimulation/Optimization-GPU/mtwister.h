@@ -12,5 +12,3 @@ typedef struct {
 	int index;
 } MTRand;
 
-MTRand InitSeed(unsigned long seed);
-

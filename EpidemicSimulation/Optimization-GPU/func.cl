@@ -127,9 +127,8 @@ __kernel void MoveAgentsToLocations(__global int* locations, __global int* width
         int i = 0;
 
         while(!hasMoved){
-            int val = atomic_cmpxchg(locations + (locationID * w + i), -1, 69);
-            if(val == -1){
-                atomic_add(locations + (locationID * w + i), id + 1);
+            int oldValue = atomic_cmpxchg(locations + (locationID * w + i), -1, id);
+            if(oldValue == -1){
                 atomic_inc(numPeopleOnLocations + locationID);
                 hasMoved = true;
             }

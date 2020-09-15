@@ -3,7 +3,7 @@
 // Global variables ----------------------------------------------
 
 const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
-const int maxLocationSize = 3000;
+const int maxLocationSize = 3500;
 
 int locationsHost[mainSize * maxLocationSize];
 Person people[NUM_PEOPLE];

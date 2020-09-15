@@ -8,7 +8,6 @@ std::vector<int> generatedRandNumbers;
 
 Person people[NUM_PEOPLE]; // Array of people
 std::default_random_engine generator(SEED); // Generator that is used when generating numbers
-std::vector<int> rngVector; // Stores all random number that have been generated
 
 const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 std::vector<int> locations[locationArraySize];
@@ -28,9 +27,9 @@ int main()
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 
 		//GetMaxPeopleOnLocation(locations, locationArraySize, maxLocationSize);
-		ChangeAgentsLocation(people, locations, generator, dayDuration, rngVector);
+		ChangeAgentsLocation(people, locations, generator, dayDuration);
 		while (i < NUM_INTERACTIONS) {
-			MakeInteractions(people, locations, generator, locationArraySize - 1, rngVector);
+			MakeInteractions(people, locations, generator, locationArraySize - 1);
 			++i;
 		}
 		i = 0;
@@ -43,8 +42,7 @@ int main()
 			WriteInfo(simulationTime, outputHistory);
 			Person::changeMaxNewInfected();
 
-			CheckAgentsStatus(people, locations, generator, rngVector);
-			//LogGeneratedRandomNumbers(rngVector, date);
+			CheckAgentsStatus(people, locations, generator);
 		}
 	}
 

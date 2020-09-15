@@ -50,8 +50,8 @@ class Person
 
 		void ExtendInfectionDay();
 		void ExtendImmunityDay();
-		bool TryInfect(std::default_random_engine& generator, int infectionProbability, std::vector<int>& rngVector);
-		bool TryKill(std::default_random_engine& generator, int deathProbability, std::vector<int>& rngVector);
+		bool TryInfect(std::default_random_engine& generator, int infectionProbability);
+		bool TryKill(std::default_random_engine& generator, int deathProbability);
 		void RecoverAgent();
 		void MakeAgentSusceptible();
 
