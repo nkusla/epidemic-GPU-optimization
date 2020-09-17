@@ -13,6 +13,7 @@ const int locationArraySize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 std::vector<int> locations[locationArraySize];
 
 std::string outputHistory; // Stores output to console
+std::string deviceType = "CPU";
 std::string date = GetCurrentDate(); // Date is used for file names
 
 int main()
@@ -21,6 +22,9 @@ int main()
 	InitiateAgents(people, generator);
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
+
+	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;;
+	std::cout << "Simulation start: \n" << std::endl;
 
 	auto start = std::chrono::high_resolution_clock::now();
 
@@ -52,5 +56,5 @@ int main()
 
 	SimulationEndInfo(outputHistory, executionTime, maxLocationSize);
 
-	LogSimulationParameters(outputHistory, date);
+	LogSimulationParameters(outputHistory, date, resultsPathCPU, deviceType);
 }

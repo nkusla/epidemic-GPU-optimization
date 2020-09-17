@@ -115,7 +115,32 @@ __kernel void InitGenerators(__global MTRand* generators, __global int* seeds){
     InitSeed(generators + id, s);
 }
 
-__kernel void MoveAgentsToLocations(__global int* locations, __global int* width, __global int* numPeopleOnLocations,
+__kernel void MoveAgentsToLocationsSingleT(__global int* locations, __global int* width, __global int* numPeopleOnLocations,
+    __global Person* people, __global int* NUM_PEOPLE){
+    
+    int w = *width;
+    for(int id = 0; id < *NUM_PEOPLE; ++id){
+        if(people[id].status != D){
+            int locationID = people[id].currentLocation;
+
+            bool hasMoved = false;
+            int i = 0;
+
+            while(!hasMoved){
+                if(locations[locationID * w + i] == -1){
+                    locations[locationID * w + i] = id;
+                    numPeopleOnLocations[locationID]++;
+                    hasMoved = true;
+                }
+                else{
+                    i++;
+                }
+            }
+        }
+    }
+}
+
+__kernel void MoveAgentsToLocationsParallel(__global int* locations, __global int* width, __global int* numPeopleOnLocations,
     __global Person* people, __global int* NUM_PEOPLE){
     
     int w = *width;

@@ -16,8 +16,10 @@ compute::buffer* CreateIntBuffer(int value);
 
 void UpdateIntBuffer(compute::buffer* buff, int value);
 
-void BufferSimulationEndInfo(compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
-	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff);
+void BufferDayInfo(std::string& outputHistory, int simulationTime, compute::buffer* numInfectedBuff);
+
+void BufferSimulationEndInfo(std::string& outputHistory, compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
+	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff, int executionTime);
 
 void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, compute::kernel& InitGeneratorsKernel);
 
@@ -25,4 +27,3 @@ void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPe
 
 void SingleLocationBySingleThread();
 
-void SinglePersonBySingleThread();

@@ -228,7 +228,7 @@ std::string GetFileName(std::string path, std::string date) {
 
 void WriteInfo(int simulationTime, std::string& outputHistory) {
 	std::string output;
-	output = "Day " + std::to_string(simulationTime / DAY_DURATION) + " - active cases: " +
+	output = "  Day " + std::to_string(simulationTime / DAY_DURATION) + " - active cases: " +
 		std::to_string(Person::numInfected) + " - new cases: " + std::to_string(Person::newInfected) + "\n";
 
 	std::cout << output;
@@ -267,12 +267,14 @@ void SimulationEndInfo(std::string& outputHistory, int executionTime, int maxLoc
 	outputHistory += output;
 }
 
-void LogSimulationParameters(std::string& outputHistory, std::string date) {
+void LogSimulationParameters(std::string& outputHistory, std::string date, std::string resultsPath, std::string deviceType) {
 	std::ofstream file;
 	std::string fileName = GetFileName(resultsPath, date);
 	file.open(fileName);
 
 	std::string params;
+	params += "DEVICE TYPE: " + deviceType + "\n\n";
+
 	params += "Parameters:\n\n";
 	params += "SEED " + std::to_string(SEED) + "\n\n";
 

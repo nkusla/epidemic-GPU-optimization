@@ -8,8 +8,7 @@
 #include <ctime>
 #include "person.h"
 
-static std::string resultsPath = "../../Results/Optimization-CPU/";
-static std::string generatedRandNumPath = "../../Results/Optimization-CPU/GeneratedRandNumbers/";
+static const std::string resultsPathCPU = "../../Results/Optimization-CPU/";
 
 // These are some helper functions that are used to generate data and radnomize it... ------------------
 
@@ -43,4 +42,4 @@ void WriteInfo(int simulationTime, std::string& outputHistory);
 
 void SimulationEndInfo(std::string& outputHistory, int executionTime, int maxLocationSize);
 
-void LogSimulationParameters(std::string& outputHistory, std::string date);
+void LogSimulationParameters(std::string& outputHistory, std::string date, std::string resultsPath, std::string deviceType);

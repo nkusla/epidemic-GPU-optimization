@@ -2,8 +2,10 @@
 
 // Global variables ----------------------------------------------
 
+const std::string deviceType = "GPU";
+const std::string resultsPathGPU = "../../Results/Optimization-GPU/";
 const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
-const int maxLocationSize = 3500;
+const int maxLocationSize = 1700;
 
 int locationsHost[mainSize * maxLocationSize];
 Person people[NUM_PEOPLE];
@@ -29,12 +31,25 @@ void UpdateIntBuffer(compute::buffer* buff, int value) {
 	queue.finish();
 }
 
-void BufferSimulationEndInfo(compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
-	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff){
+void BufferDayInfo(std::string& outputHistory, int simulationTime, compute::buffer* numInfectedBuff) {
 
 	int numInfected, numRecovered, numDead, maxInfected;
 	std::string output;
+
+	queue.enqueue_read_buffer(*numInfectedBuff, 0, sizeof(int), &numInfected);
+	queue.finish();
+
+	output = "  Day " + std::to_string(simulationTime / DAY_DURATION) + " - active cases: " + std::to_string(numInfected) + "\n";
+	std::cout << output;
+	outputHistory += output;
+}
+
+void BufferSimulationEndInfo(std::string& outputHistory, compute::buffer* numInfectedBuff, compute::buffer* numRecoveredBuff,
+	compute::buffer* numDeadBuff, compute::buffer* maxInfectedBuff, int executionTime){
+
+	int numInfected, numRecovered, numDead, maxInfected;
 	double value;
+	std::string output;
 
 	queue.enqueue_read_buffer(*maxInfectedBuff, 0, sizeof(int), &maxInfected);
 	queue.enqueue_read_buffer(*numInfectedBuff, 0, sizeof(int), &numInfected);
@@ -54,7 +69,11 @@ void BufferSimulationEndInfo(compute::buffer* numInfectedBuff, compute::buffer* 
 	value = static_cast<double>(100 * numDead) / NUM_PEOPLE;
 	output += "Dead: " + std::to_string(numDead) + " - " + std::to_string(value) + "% of population\n";
 
+	output += "\nTime: " + std::to_string(executionTime) + " ms\n";
+
 	std::cout << output << std::endl;
+
+	outputHistory += output;
 }
 
 void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, compute::kernel& InitGeneratorsKernel) {
@@ -145,6 +164,7 @@ void SingleLocationBySingleThread() {
 	size_t global_dimensions[] = { 1, 0, 0 };
 
 	int i = 0, simulationTime = 0, dayDuration = 0;
+	std::string outputHistory;
 	compute::buffer* dayDurationBuff = CreateIntBuffer(dayDuration);
 
 	// ----- Preparing data and kernels ---------------------------------------------------------------
@@ -198,7 +218,7 @@ void SingleLocationBySingleThread() {
 	ChangeAgentsLocationKernel.set_arg(9, sizeof(*NUM_WORKPLACES_Buff), NUM_WORKPLACES_Buff);
 	ChangeAgentsLocationKernel.set_arg(10, sizeof(*POPULAR_PLACES_Buff), POPULAR_PLACES_Buff);
 
-	compute::kernel MoveAgentsToLocationsKernel = funcProgram.create_kernel("MoveAgentsToLocations");
+	compute::kernel MoveAgentsToLocationsKernel = funcProgram.create_kernel("MoveAgentsToLocationsSingleT");
 	MoveAgentsToLocationsKernel.set_arg(0, sizeof(locationsOnDevice), &locationsOnDevice);
 	MoveAgentsToLocationsKernel.set_arg(1, sizeof(*maxLocationSizeBuff), maxLocationSizeBuff);
 	MoveAgentsToLocationsKernel.set_arg(2, numPeopleOnLocationsDevice);
@@ -212,6 +232,8 @@ void SingleLocationBySingleThread() {
 	// ----- Main -------------------------------------------------------------------------------------
 
 	queue.finish();
+
+	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;
 	std::cout << "Simulation start: \n" << std::endl;
 	auto start = std::chrono::high_resolution_clock::now();
 
@@ -220,8 +242,9 @@ void SingleLocationBySingleThread() {
 		global_dimensions[0] = mainSize;
 		queue.enqueue_nd_range_kernel(ChangeAgentsLocationKernel, work_dim, NULL, global_dimensions, NULL);
 
-		global_dimensions[0] = NUM_PEOPLE;
-		queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
+		//global_dimensions[0] = NUM_PEOPLE;
+		//queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
+		queue.enqueue_task(MoveAgentsToLocationsKernel);
 
 		while (i < NUM_INTERACTIONS) {
 			global_dimensions[0] = mainSize;
@@ -240,7 +263,8 @@ void SingleLocationBySingleThread() {
 			global_dimensions[0] = NUM_PEOPLE;
 			queue.enqueue_nd_range_kernel(CheckAgentsStatusKernel, work_dim, NULL, global_dimensions, NULL);
 			queue.finish();
-			std::cout << "Day " << simulationTime / DAY_DURATION << std::endl;
+			BufferDayInfo(outputHistory, simulationTime, numInfectedBuff);
+			//std::cout << "  Day " << simulationTime / DAY_DURATION << std::endl;
 		}
 	}
 
@@ -248,7 +272,7 @@ void SingleLocationBySingleThread() {
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 	int executionTime = duration.count();
 
-	BufferSimulationEndInfo(numInfectedBuff, numRecoveredBuff, numDeadBuff, maxInfectedBuff);
+	BufferSimulationEndInfo(outputHistory, numInfectedBuff, numRecoveredBuff, numDeadBuff, maxInfectedBuff, executionTime);
 
-	std::cout << "\nTime: " << executionTime << " ms" << std::endl;
+	LogSimulationParameters(outputHistory, GetCurrentDate(), resultsPathGPU, "GPU");
 }
