@@ -5,7 +5,7 @@
 const std::string deviceType = "GPU";
 const std::string resultsPathGPU = "../../Results/Optimization-GPU/";
 const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
-const int maxLocationSize = 1700;
+const int maxLocationSize = 2500;
 
 int locationsHost[mainSize * maxLocationSize];
 Person people[NUM_PEOPLE];
@@ -218,7 +218,7 @@ void SingleLocationBySingleThread() {
 	ChangeAgentsLocationKernel.set_arg(9, sizeof(*NUM_WORKPLACES_Buff), NUM_WORKPLACES_Buff);
 	ChangeAgentsLocationKernel.set_arg(10, sizeof(*POPULAR_PLACES_Buff), POPULAR_PLACES_Buff);
 
-	compute::kernel MoveAgentsToLocationsKernel = funcProgram.create_kernel("MoveAgentsToLocationsSingleT");
+	compute::kernel MoveAgentsToLocationsKernel = funcProgram.create_kernel("MoveAgentsToLocationsParallel");
 	MoveAgentsToLocationsKernel.set_arg(0, sizeof(locationsOnDevice), &locationsOnDevice);
 	MoveAgentsToLocationsKernel.set_arg(1, sizeof(*maxLocationSizeBuff), maxLocationSizeBuff);
 	MoveAgentsToLocationsKernel.set_arg(2, numPeopleOnLocationsDevice);
@@ -226,8 +226,8 @@ void SingleLocationBySingleThread() {
 	MoveAgentsToLocationsKernel.set_arg(4, sizeof(*NUM_PEOPLE_Buff), NUM_PEOPLE_Buff);
 
 	compute::kernel UpdateDayDurationKernel = funcProgram.create_kernel("UpdateDayDuration");
-	UpdateDayDurationKernel.set_arg(0, sizeof(*DAY_DURATION_Buff), DAY_DURATION_Buff);
-	UpdateDayDurationKernel.set_arg(1, sizeof(*dayDurationBuff), dayDurationBuff);
+	UpdateDayDurationKernel.set_arg(0, sizeof(*dayDurationBuff), dayDurationBuff);
+	UpdateDayDurationKernel.set_arg(1, sizeof(*DAY_DURATION_Buff), DAY_DURATION_Buff);
 
 	// ----- Main -------------------------------------------------------------------------------------
 
@@ -241,30 +241,35 @@ void SingleLocationBySingleThread() {
 		
 		global_dimensions[0] = mainSize;
 		queue.enqueue_nd_range_kernel(ChangeAgentsLocationKernel, work_dim, NULL, global_dimensions, NULL);
+		queue.finish();
 
-		//global_dimensions[0] = NUM_PEOPLE;
-		//queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
-		queue.enqueue_task(MoveAgentsToLocationsKernel);
+		global_dimensions[0] = NUM_PEOPLE;
+		queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
+		//queue.enqueue_task(MoveAgentsToLocationsKernel);
+		queue.finish();
 
 		while (i < NUM_INTERACTIONS) {
 			global_dimensions[0] = mainSize;
 			queue.enqueue_nd_range_kernel(MakeInteractionsKernel, work_dim, NULL, global_dimensions, NULL);
+			queue.finish();
 			++i;
 		}
 		i = 0;
 		dayDuration += 1;
 		queue.enqueue_task(UpdateDayDurationKernel);
+		queue.finish();
 
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
 			dayDuration = 0;
 			queue.enqueue_task(UpdateDayDurationKernel);
+			queue.finish();
 
 			global_dimensions[0] = NUM_PEOPLE;
 			queue.enqueue_nd_range_kernel(CheckAgentsStatusKernel, work_dim, NULL, global_dimensions, NULL);
 			queue.finish();
-			BufferDayInfo(outputHistory, simulationTime, numInfectedBuff);
-			//std::cout << "  Day " << simulationTime / DAY_DURATION << std::endl;
+			//BufferDayInfo(outputHistory, simulationTime, numInfectedBuff);
+			std::cout << "  Day " << simulationTime / DAY_DURATION << std::endl;
 		}
 	}
 
