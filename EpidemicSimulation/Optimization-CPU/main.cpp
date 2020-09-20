@@ -23,7 +23,7 @@ int main()
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
 
-	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;;
+	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;
 	std::cout << "Simulation start: \n" << std::endl;
 
 	auto start = std::chrono::high_resolution_clock::now();

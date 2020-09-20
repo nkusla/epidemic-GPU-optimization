@@ -8,10 +8,11 @@ __kernel void MakeInteractions(__global int* locations, __global int* width, __g
     __global int* FATALITY_RATE, __global int* numInfected, __global int* maxInfected) {
 
     int id = get_global_id(0);
-    int w = *width;
     int max = numPeopleOnLocations[id];
     
     if (max > 1){
+        int w = *width;
+
         for(int i = 0; i < max; ++i){
             int personID = locations[id * w + i];
             int rand = GenerateNumInRange(generators + id, 0, max-1);
@@ -35,8 +36,7 @@ __kernel void CheckAgentsStatus(__global Person* people, __global MTRand* genera
     int id = get_global_id(0);
 
     if(people[id].status == I){
-        bool isKilled = TryKill(people + id, generators + id, FATALITY_RATE, numInfected, numDead);
-        if(!isKilled){
+        if(!TryKill(people + id, generators + id, FATALITY_RATE, numInfected, numDead)){
             people[id].infectionDays++;
             if(people[id].infectionDays == *INFECTION_DURATION){
                 RecoverAgent(people + id, numInfected, numRecovered);
@@ -57,11 +57,11 @@ __kernel void ChangeAgentsLocation(__global int* locations, __global int* width,
     __global int* NUM_WORKPLACES, __global int* POPULAR_PLACES){
 
     int id = get_global_id(0);
-    int w = *width;
     int max = numPeopleOnLocations[id];
 
     if(max > 0){
-
+        int w = *width;
+        
         const int homeIndexFirst = 0;
         const int homeIndexLast = *NUM_HOMES - 1;
 
@@ -147,16 +147,15 @@ __kernel void MoveAgentsToLocationsParallel(__global int* locations, __global in
     __global Person* people, __global int* NUM_PEOPLE){
     
     int id = get_global_id(0);
-    int w = *width;
     if(people[id].status != D){
+        int w = *width;
         int locationID = people[id].currentLocation;
 
         bool hasMoved = false;
         int i = 0;
 
         while(!hasMoved){
-            int oldValue = atomic_cmpxchg(locations + (locationID * w + i), -1, id);
-            if(oldValue == -1){
+            if(atomic_cmpxchg(locations + (locationID * w + i), -1, id) == -1){
                 atomic_inc(numPeopleOnLocations + locationID);
                 hasMoved = true;
             }
