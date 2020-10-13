@@ -5,7 +5,7 @@
 const std::string deviceType = "GPU";
 const std::string resultsPathGPU = "../../Results/Optimization-GPU/";
 const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
-const int maxLocationSize = 4700;
+const int maxLocationSize = 1500;
 
 int locationsHost[mainSize * maxLocationSize];
 Person people[NUM_PEOPLE];
@@ -13,7 +13,7 @@ std::vector<int> locations[mainSize];
 
 compute::device gpu = compute::system::default_device();
 compute::context context(gpu);
-compute::command_queue queue(context, gpu);
+compute::command_queue queue(context, gpu, CL_QUEUE_PROFILING_ENABLE);
 
 // ---------------------------------------------------------------
 
@@ -235,42 +235,49 @@ void SingleLocationBySingleThread() {
 
 	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;
 	std::cout << "Simulation start: \n" << std::endl;
-	auto start = std::chrono::high_resolution_clock::now();
+	//auto start = std::chrono::high_resolution_clock::now();
+	int executionTime = 0;
+	compute::event event;
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 		
-		global_dimensions[0] = mainSize;
-		queue.enqueue_nd_range_kernel(ChangeAgentsLocationKernel, work_dim, NULL, global_dimensions, NULL);
+		event = queue.enqueue_1d_range_kernel(ChangeAgentsLocationKernel, NULL, mainSize, NULL);
+		queue.finish();
+		executionTime += event.duration<std::chrono::milliseconds>().count();
 
-		global_dimensions[0] = NUM_PEOPLE;
-		queue.enqueue_nd_range_kernel(MoveAgentsToLocationsKernel, work_dim, NULL, global_dimensions, NULL);
+		event = queue.enqueue_1d_range_kernel(MoveAgentsToLocationsKernel, NULL, NUM_PEOPLE, NULL);
+		queue.finish();
+		executionTime += event.duration<std::chrono::milliseconds>().count();
 		//queue.enqueue_task(MoveAgentsToLocationsKernel);
 
 		while (i < NUM_INTERACTIONS) {
-			global_dimensions[0] = mainSize;
-			queue.enqueue_nd_range_kernel(MakeInteractionsKernel, work_dim, NULL, global_dimensions, NULL);
+			event = queue.enqueue_1d_range_kernel(MakeInteractionsKernel, NULL, mainSize, NULL);
+			queue.finish();
+			executionTime += event.duration<std::chrono::milliseconds>().count();
 			++i;
 		}
 		i = 0;
 		dayDuration += 1;
 		queue.enqueue_task(UpdateDayDurationKernel);
+		queue.finish();
 
 		if (dayDuration == DAY_DURATION) {
 			simulationTime += dayDuration;
 			dayDuration = 0;
 			queue.enqueue_task(UpdateDayDurationKernel);
-
-			global_dimensions[0] = NUM_PEOPLE;
-			queue.enqueue_nd_range_kernel(CheckAgentsStatusKernel, work_dim, NULL, global_dimensions, NULL);
-			//BufferDayInfo(outputHistory, simulationTime, numInfectedBuff);
 			queue.finish();
+
+			event = queue.enqueue_1d_range_kernel(CheckAgentsStatusKernel, NULL, NUM_PEOPLE, NULL);
+			queue.finish();
+			executionTime += event.duration<std::chrono::milliseconds>().count();
+			//BufferDayInfo(outputHistory, simulationTime, numInfectedBuff);
 			std::cout << "  Day " << simulationTime / DAY_DURATION << std::endl;
 		}
 	}
 
-	auto end = std::chrono::high_resolution_clock::now();
+	/*auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-	int executionTime = duration.count();
+	int executionTime = duration.count();*/
 
 	BufferSimulationEndInfo(outputHistory, numInfectedBuff, numRecoveredBuff, numDeadBuff, maxInfectedBuff, executionTime);
 
