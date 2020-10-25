@@ -26,8 +26,11 @@
     <ClCompile Include="..\Optimization-CPU\src\func.cpp">
       <Filter>Source Files\Opt-CPU</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cpp">
+    <ClCompile Include="src\utils.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Optimization-CPU\main.cpp">
+      <Filter>Source Files\Opt-CPU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,10 +43,10 @@
     <ClInclude Include="..\Optimization-CPU\inc\macros.h">
       <Filter>Header Files\Opt-CPU</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="inc\mtwister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mtwister.h">
+    <ClInclude Include="inc\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

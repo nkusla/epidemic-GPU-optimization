@@ -5,9 +5,9 @@
 const std::string deviceType = "GPU";
 const std::string resultsPathGPU = "../../Results/Optimization-GPU/";
 const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
-const int maxLocationSize = 1500;
+const int maxLocationSize = 1500; // max number of people on any loaction
 
-int locationsHost[mainSize * maxLocationSize];
+int locationsHost[mainSize * maxLocationSize]; // this array will be copied to GPU
 Person people[NUM_PEOPLE];
 std::vector<int> locations[mainSize];
 
@@ -131,7 +131,7 @@ void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPe
 
 void SingleLocationBySingleThread() {
 	
-	// ----- Main variables and data -----------------------------------------------------------------
+	// ----- Buffers and variables -----------------------------------------------------------------
 
 	compute::vector<Person> peopleDevice(NUM_PEOPLE, context);
 	compute::buffer locationsOnDevice(context, sizeof(int) * maxLocationSize * mainSize);
@@ -160,19 +160,16 @@ void SingleLocationBySingleThread() {
 	compute::buffer* numDeadBuff = CreateIntBuffer(Person::numDead);
 	compute::buffer* maxInfectedBuff = CreateIntBuffer(Person::maxInfected);
 
-	size_t work_dim = 1;
-	size_t global_dimensions[] = { 1, 0, 0 };
-
 	int i = 0, simulationTime = 0, dayDuration = 0;
 	std::string outputHistory;
 	compute::buffer* dayDurationBuff = CreateIntBuffer(dayDuration);
 
 	// ----- Preparing data and kernels ---------------------------------------------------------------
 
-	compute::program funcProgram = compute::program::create_with_source_file("func.cl", context);
+	compute::program funcProgram = compute::program::create_with_source_file("./cl/func.cl", context);
 
 	try {
-		funcProgram.build("-I .");
+		funcProgram.build("-I ./cl/");
 	}
 	catch (boost::compute::opencl_error& e) {
 		std::cout << funcProgram.build_log() << std::endl;
@@ -235,7 +232,6 @@ void SingleLocationBySingleThread() {
 
 	std::cout << "DEVICE TYPE: " << deviceType << "\n" << std::endl;
 	std::cout << "Simulation start: \n" << std::endl;
-	//auto start = std::chrono::high_resolution_clock::now();
 	int executionTime = 0;
 	compute::event event;
 
@@ -248,7 +244,7 @@ void SingleLocationBySingleThread() {
 		event = queue.enqueue_1d_range_kernel(MoveAgentsToLocationsKernel, NULL, NUM_PEOPLE, NULL);
 		queue.finish();
 		executionTime += event.duration<std::chrono::milliseconds>().count();
-		//queue.enqueue_task(MoveAgentsToLocationsKernel);
+		//queue.enqueue_task(MoveAgentsToLocationsKernel); // execution on single thread
 
 		while (i < NUM_INTERACTIONS) {
 			event = queue.enqueue_1d_range_kernel(MakeInteractionsKernel, NULL, mainSize, NULL);
@@ -274,10 +270,6 @@ void SingleLocationBySingleThread() {
 			std::cout << "  Day " << simulationTime / DAY_DURATION << std::endl;
 		}
 	}
-
-	/*auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-	int executionTime = duration.count();*/
 
 	BufferSimulationEndInfo(outputHistory, numInfectedBuff, numRecoveredBuff, numDeadBuff, maxInfectedBuff, executionTime);
 

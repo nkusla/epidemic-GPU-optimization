@@ -19,10 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Optimization-CPU\main.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\func.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\person.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Optimization-CPU\Optimization-CPU.vcxproj">
@@ -33,8 +34,8 @@
     <ClInclude Include="..\Optimization-CPU\inc\func.h" />
     <ClInclude Include="..\Optimization-CPU\inc\macros.h" />
     <ClInclude Include="..\Optimization-CPU\inc\person.h" />
-    <ClInclude Include="mtwister.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="inc\mtwister.h" />
+    <ClInclude Include="inc\utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -138,7 +139,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;$(SolutionDir)OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-GPU\inc;$(SolutionDir)Optimization-CPU\inc;$(SolutionDir)OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,7 +156,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-CPU\inc;$(SolutionDir)OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Optimization-GPU\inc;$(SolutionDir)Optimization-CPU\inc;$(SolutionDir)OpenCL\inc;C:\Boost\boost_1_74_0;C:\Boost\compute-boost-1.74.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

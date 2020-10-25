@@ -1,3 +1,7 @@
+// In this header are all functions that are used by main function
+// in order to create buffers, build kernels, send data back and forth between
+// host and GPU and execute kernels on GPU
+
 #pragma once
 
 #include <iostream>
@@ -25,5 +29,5 @@ void SetDeviceRandGenerators(compute::vector<MTRand>& randGeneratorsDevice, comp
 
 void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPeopleOnLocationsDevice, compute::buffer& locationsOnDevice);
 
-void SingleLocationBySingleThread();
+void SingleLocationBySingleThread(); // <--- Most important function
 

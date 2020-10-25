@@ -6,10 +6,10 @@
 #define SEED 1616
 
 // number
-#define NUM_PEOPLE 100000
-#define POPULAR_PLACES 45
-#define NUM_HOMES 27000
-#define NUM_WORKPLACES 12200
+#define NUM_PEOPLE 10000
+#define POPULAR_PLACES 15
+#define NUM_HOMES 2500
+#define NUM_WORKPLACES 1250
 #define NUM_INTERACTIONS 4
 
 // percentage
