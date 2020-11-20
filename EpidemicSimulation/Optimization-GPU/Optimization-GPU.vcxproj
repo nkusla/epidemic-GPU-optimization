@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Optimization-CPU\main.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\func.cpp" />
     <ClCompile Include="..\Optimization-CPU\src\person.cpp" />
     <ClCompile Include="main.cpp" />
