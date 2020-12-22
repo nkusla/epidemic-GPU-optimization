@@ -4,12 +4,12 @@
 
 const std::string deviceType = "GPU";
 const std::string resultsPathGPU = "../../Results/Optimization-GPU/";
-const int mainSize = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
+const int numLocations = NUM_HOMES + NUM_WORKPLACES + POPULAR_PLACES;
 const int maxLocationSize = 1500; // max number of people on any loaction
 
-int locationsHost[mainSize * maxLocationSize]; // this array will be copied to GPU
+int locationsHost[numLocations * maxLocationSize]; // this array will be copied to GPU
 Person people[NUM_PEOPLE];
-std::vector<int> locations[mainSize];
+std::vector<int> locations[numLocations];
 
 compute::device gpu = compute::system::default_device();
 compute::context context(gpu);
@@ -105,15 +105,15 @@ void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPe
 	SetAgentsHome(people, locations);
 	InfectAgents(people, generator);
 
-	for (int i = 0; i < mainSize; ++i) {
+	for (int i = 0; i < numLocations; ++i) {
 		numPeopleOnLocations.push_back(0);
 	}
 
-	for (int i = 0; i < mainSize * maxLocationSize; ++i) {
+	for (int i = 0; i < numLocations * maxLocationSize; ++i) {
 		locationsHost[i] = -1;
 	}
 
-	for (int i = 0; i < mainSize; ++i) {
+	for (int i = 0; i < numLocations; ++i) {
 		for (int j = 0; j < locations[i].size(); ++j) {
 			locationsHost[i * maxLocationSize + j] = locations[i][j];
 			numPeopleOnLocations[i]++;
@@ -125,7 +125,7 @@ void InitData(compute::vector<Person>& peopleDevice, compute::vector<int>& numPe
 	compute::copy(numPeopleOnLocations.begin(), numPeopleOnLocations.end(), numPeopleOnLocationsDevice.begin(), queue);
 	queue.finish();
 
-	queue.enqueue_write_buffer(locationsOnDevice, 0, sizeof(int) * maxLocationSize * mainSize, locationsHost);
+	queue.enqueue_write_buffer(locationsOnDevice, 0, sizeof(int) * maxLocationSize * numLocations, locationsHost);
 	queue.finish();
 }
 
@@ -134,8 +134,8 @@ void SingleLocationBySingleThread() {
 	// ----- Buffers and variables -----------------------------------------------------------------
 
 	compute::vector<Person> peopleDevice(NUM_PEOPLE, context);
-	compute::buffer locationsOnDevice(context, sizeof(int) * maxLocationSize * mainSize);
-	compute::vector<int> numPeopleOnLocationsDevice(mainSize, context);
+	compute::buffer locationsOnDevice(context, sizeof(int) * maxLocationSize * numLocations);
+	compute::vector<int> numPeopleOnLocationsDevice(numLocations, context);
 	compute::vector<MTRand> randGeneratorsDevice(NUM_PEOPLE, context);
 	
 	InitData(peopleDevice, numPeopleOnLocationsDevice, locationsOnDevice);
@@ -237,7 +237,7 @@ void SingleLocationBySingleThread() {
 
 	while (simulationTime < SIMULATION_DURATION * DAY_DURATION) {
 		
-		event = queue.enqueue_1d_range_kernel(ChangeAgentsLocationKernel, NULL, mainSize, NULL);
+		event = queue.enqueue_1d_range_kernel(ChangeAgentsLocationKernel, NULL, numLocations, NULL);
 		queue.finish();
 		executionTime += event.duration<std::chrono::milliseconds>().count();
 
@@ -247,7 +247,7 @@ void SingleLocationBySingleThread() {
 		//queue.enqueue_task(MoveAgentsToLocationsKernel); // execution on single thread
 
 		while (i < NUM_INTERACTIONS) {
-			event = queue.enqueue_1d_range_kernel(MakeInteractionsKernel, NULL, mainSize, NULL);
+			event = queue.enqueue_1d_range_kernel(MakeInteractionsKernel, NULL, numLocations, NULL);
 			queue.finish();
 			executionTime += event.duration<std::chrono::milliseconds>().count();
 			++i;
